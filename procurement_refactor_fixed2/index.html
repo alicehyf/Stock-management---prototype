@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Procurement & Inventory Prototype</title>
+  <link rel="stylesheet" href="assets/css/styles.css" />
+</head>
+<body>
+<header class="topbar">
+    <div class="brand">
+      <div class="app-icon" title="App">
+        <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="3" y="3" width="8" height="8" rx="2" fill="white" opacity=".95"></rect>
+          <rect x="13" y="3" width="8" height="8" rx="2" fill="white" opacity=".95"></rect>
+          <rect x="3" y="13" width="8" height="8" rx="2" fill="white" opacity=".95"></rect>
+          <rect x="13" y="13" width="8" height="8" rx="2" fill="white" opacity=".95"></rect>
+        </svg>
+      </div>
+      <div class="title">
+        Komodo Resort New
+        <svg class="caret" viewBox="0 0 20 20" aria-hidden="true">
+          <path d="M5 7l5 6 5-6" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+      </div>
+    </div>
+
+    <div class="global-search">
+      <div class="searchbox">
+        <svg class="magnify" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="7" fill="none" stroke="#111827" stroke-width="2"></circle>
+          <path d="M20 20l-3.5-3.5" fill="none" stroke="#111827" stroke-width="2" stroke-linecap="round"></path>
+        </svg>
+        <input type="text" placeholder="Search" />
+      </div>
+    </div>
+
+    <div class="top-actions">
+      <div class="icon-btn" title="Calendar">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M7 3v3M17 3v3" />
+          <path d="M4 7h16" />
+          <rect x="4" y="5" width="16" height="16" rx="3" />
+        </svg>
+      </div>
+      <div class="icon-btn" title="Settings">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"></path>
+          <path d="M19.4 15a7.8 7.8 0 0 0 .1-2l2-1.3-2-3.4-2.3.8a7.6 7.6 0 0 0-1.7-1l-.3-2.4H9l-.3 2.4a7.6 7.6 0 0 0-1.7 1l-2.3-.8-2 3.4 2 1.3a7.8 7.8 0 0 0 .1 2l-2 1.3 2 3.4 2.3-.8a7.6 7.6 0 0 0 1.7 1l.3 2.4h6l.3-2.4a7.6 7.6 0 0 0 1.7-1l2.3.8 2-3.4-2-1.3Z"></path>
+        </svg>
+      </div>
+      <div class="icon-btn" title="Help">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 18h.01"></path>
+          <path d="M9.1 9a3 3 0 1 1 5.8 1c0 2-3 2-3 4"></path>
+          <circle cx="12" cy="12" r="9"></circle>
+        </svg>
+      </div>
+      <div class="avatar" title="User">HY</div>
+    </div>
+  </header>
+<!-- Fixed Sidebar -->
+  <aside class="sidebar">
+    <div class="menu-group">
+      <div class="menu-item" data-link="#">
+        <div class="ico">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round"></path>
+          </svg>
+        </div>
+        <div class="label">Menu</div>
+      </div>
+
+      <div class="menu-item" data-link="#">
+        <div class="ico">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 11l8-7 8 7v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"></path>
+            <path d="M9 22V12h6v10"></path>
+          </svg>
+        </div>
+        <div class="label">Dashboard</div>
+      </div>
+
+      <!-- Products (expandable) -->
+      <div class="menu-item" data-toggle="products">
+        <div class="ico">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M7 7h10v10H7z"></path>
+            <path d="M9 11h6M9 14h4" stroke-linecap="round"></path>
+          </svg>
+        </div>
+        <div class="label">Products</div>
+        <svg class="chev" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+      </div>
+      <div class="submenu" data-submenu="products">
+        <a href="#" onclick="return false;">Products</a>
+        <a href="#" onclick="return false;">Categories</a>
+        <a href="#" onclick="return false;">Combinations</a>
+        <a href="#/inventory/ingredients">Ingredients</a>
+        <a href="#" onclick="return false;">Unit Types</a>
+      </div>
+
+      <!-- Stock Management (expandable) -->
+      <div class="menu-item" data-toggle="stock">
+        <div class="ico">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round"></path>
+            <path d="M7 7v10M12 7v10M17 7v10"></path>
+          </svg>
+        </div>
+        <div class="label">Stock management</div>
+        <svg class="chev" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+      </div>
+      <div class="submenu" data-submenu="stock">
+        <a class="submenu-link" href="#/inventory/ingredients"><span>Ingredients</span></a>
+        <a class="submenu-link" href="#/inventory/stock-count"><span>Stock count</span></a>
+        <a class="submenu-link" href="#" onclick="return false;"><span>Recipes</span></a>
+        <a class="submenu-link" href="#" onclick="return false;"><span>Purchase Orders</span></a>
+        <a class="submenu-link" href="#" onclick="return false;"><span>Receiving</span></a>
+        <a class="submenu-link" href="#" onclick="return false;"><span>Vendor Credits</span></a>
+      </div>
+      <div class="menu-item open" data-toggle="procurement">
+        <div class="menu-icon">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6 7h15l-2 10H8L6 7z" stroke-linejoin="round"></path>
+            <path d="M6 7l-2-3H2" stroke-linecap="round"></path>
+            <path d="M9 20a1 1 0 100-2 1 1 0 000 2zM18 20a1 1 0 100-2 1 1 0 000 2z"></path>
+          </svg>
+        </div>
+        <span class="menu-label">Procurement</span>
+        <div class="chev">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18l6-6-6-6" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+        </div>
+      </div>
+      
+      <div class="submenu open" data-submenu="procurement">
+        <a class="submenu-link" href="#/procurement/overview"><span>Overview</span></a>
+        <a class="submenu-link active" href="#/procurement/pr"><span>Purchase requisitions</span></a>
+        <a class="submenu-link" href="#/procurement/po"><span>Purchase orders</span></a>
+        <a class="submenu-link" href="#/procurement/receiving"><span>Receiving</span></a>
+        <a class="submenu-link" href="#"><span>Suppliers</span></a>
+      </div>
+
+
+
+      <div class="sidebar-divider"></div>
+
+      <div class="menu-item" data-link="#">
+        <div class="ico">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M3 9h18"></path>
+            <path d="M7 12h10"></path>
+            <path d="M5 15h14"></path>
+          </svg>
+        </div>
+        <div class="label">Floors</div>
+        <svg class="chev" viewBox="0 0 24 24" aria-hidden="true" style="opacity:.65">
+          <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+      </div>
+
+      <div class="menu-item" data-link="#">
+        <div class="ico">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="6" y="3" width="12" height="14" rx="2"></rect>
+            <path d="M8 7h8M8 10h8M8 13h6" stroke-linecap="round"></path>
+            <path d="M8 21h8" stroke-linecap="round"></path>
+          </svg>
+        </div>
+        <div class="label">Printing</div>
+        <svg class="chev" viewBox="0 0 24 24" aria-hidden="true" style="opacity:.65">
+          <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+      </div>
+
+      <div class="menu-item" data-link="#">
+        <div class="ico">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="4" y="3" width="16" height="18" rx="3"></rect>
+            <path d="M8 8h8M8 12h8M8 16h6" stroke-linecap="round"></path>
+          </svg>
+        </div>
+        <div class="label">Payments</div>
+        <svg class="chev" viewBox="0 0 24 24" aria-hidden="true" style="opacity:.65">
+          <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+      </div>
+
+      <div class="menu-item" data-toggle="settings">
+        <div class="ico">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"></path>
+            <path d="M19.4 15a7.8 7.8 0 0 0 .1-2l2-1.3-2-3.4-2.3.8a7.6 7.6 0 0 0-1.7-1l-.3-2.4H9l-.3 2.4a7.6 7.6 0 0 0-1.7 1l-2.3-.8-2 3.4 2 1.3a7.8 7.8 0 0 0 .1 2l-2 1.3 2 3.4 2.3-.8a7.6 7.6 0 0 0 1.7 1l.3 2.4h6l.3-2.4a7.6 7.6 0 0 0 1.7-1l2.3.8 2-3.4-2-1.3Z"></path>
+          </svg>
+        </div>
+        <div class="label">Settings</div>
+        <svg class="chev" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+      </div>
+      <div class="submenu" data-submenu="settings">
+        <a href="#" onclick="return false;">General</a>
+        <a href="#" onclick="return false;">Users</a>
+        <a href="#" onclick="return false;">Integrations</a>
+      </div>
+    </div>
+  </aside>
+  <main class="content">
+    <div id="app"></div>
+  </main>
+
+  <!--
+    This prototype is meant to be double-click friendly (file://) and GitHub Pages friendly.
+    So we use classic scripts (no ES-module imports) and keep everything in separate JS files.
+  -->
+  <script src="assets/js/core/store.js"></script>
+  <script src="assets/js/core/ui.js"></script>
+  <script src="assets/js/core/router.js"></script>
+
+  <script src="assets/js/pages/overview.js"></script>
+  <script src="assets/js/pages/pr.js"></script>
+  <script src="assets/js/pages/po.js"></script>
+  <script src="assets/js/pages/receiving.js"></script>
+  <script src="assets/js/pages/ingredients.js"></script>
+  <script src="assets/js/pages/stockcount.js"></script>
+
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
