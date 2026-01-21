@@ -1,0 +1,2297 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Stock count - Komodo Resort New</title>
+  <style>
+:root{
+      --blue:#1f57ff;
+      --blue-2:#1a49d6;
+      --bg:#f6f7fb;
+      --card:#ffffff;
+      --text:#111827;
+      --muted:#6b7280;
+      --line:#e5e7eb;
+
+      --shadow: 0 10px 25px rgba(17,24,39,.08);
+      --shadow-soft: 0 6px 18px rgba(17,24,39,.10);
+
+      --radius:14px;
+      --radius-sm:10px;
+
+      --sidebar-w: 270px;
+      --topbar-h: 64px;
+
+      --nav-hover:#f3f4f6;
+      --nav-open-bg:#eef3ff;
+      --nav-active-bg:#e7efff;
+
+      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:var(--font);
+      color:var(--text);
+      background:var(--bg);
+      overflow-x:hidden;
+    }
+
+    /* Top bar */
+    .topbar{
+      position:sticky;
+      top:0;
+      z-index:80;
+      height:var(--topbar-h);
+      background:var(--blue);
+      color:#fff;
+      display:flex;
+      align-items:center;
+      padding:0 18px;
+      gap:14px;
+      box-shadow: 0 2px 0 rgba(255,255,255,.05);
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      min-width:260px;
+    }
+    .brand .app-icon{
+      width:28px;height:28px;border-radius:7px;
+      background:rgba(255,255,255,.18);
+      display:grid;place-items:center;
+    }
+    .brand .title{
+      font-weight:650;
+      letter-spacing:.2px;
+      display:flex;
+      align-items:center;
+      gap:6px;
+      white-space:nowrap;
+    }
+    .brand .caret{
+      width:10px;height:10px;opacity:.85;
+      transform:translateY(1px);
+    }
+
+    .global-search{
+      flex:1;
+      display:flex;
+      justify-content:center;
+    }
+    .global-search .searchbox{
+      width:min(860px, 100%);
+      background:#fff;
+      color:var(--text);
+      border-radius:999px;
+      height:40px;
+      display:flex;
+      align-items:center;
+      padding:0 14px 0 16px;
+      gap:10px;
+      box-shadow: 0 6px 16px rgba(0,0,0,.12);
+    }
+    .global-search input{
+      border:0;outline:0;
+      width:100%;
+      font-size:14px;
+    }
+    .global-search .magnify{
+      width:18px;height:18px;opacity:.55;
+    }
+
+    .top-actions{
+      display:flex;
+      align-items:center;
+      gap:14px;
+    }
+    .icon-btn{
+      width:34px;height:34px;
+      border-radius:10px;
+      display:grid;place-items:center;
+      background:rgba(255,255,255,.12);
+      border:1px solid rgba(255,255,255,.12);
+      cursor:pointer;
+    }
+    .icon-btn:hover{background:rgba(255,255,255,.18)}
+    .icon-btn svg{width:18px;height:18px;fill:none;stroke:#fff;stroke-width:2}
+    .avatar{
+      width:34px;height:34px;border-radius:999px;
+      background:rgba(255,255,255,.18);
+      display:grid;place-items:center;
+      font-weight:700;
+      border:1px solid rgba(255,255,255,.18);
+    }
+
+    /* Fixed sidebar (full menu) */
+    .sidebar{
+      position:fixed;
+      top:var(--topbar-h);
+      left:0;
+      bottom:0;
+      width:var(--sidebar-w);
+      background:#fff;
+      border-right:1px solid var(--line);
+      overflow:auto;
+      padding:14px 10px 18px;
+      z-index:70;
+    }
+
+    .menu-group{margin-top:6px}
+    .menu-item{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      padding:12px 12px;
+      border-radius:14px;
+      color:#111827;
+      cursor:pointer;
+      user-select:none;
+    }
+    .menu-item:hover{background:var(--nav-hover)}
+    .menu-item .ico{
+      width:28px;height:28px;border-radius:10px;
+      display:grid;place-items:center;
+      background:#f3f4f6;
+      border:1px solid #eef2f7;
+      flex:0 0 auto;
+    }
+    .menu-item .ico svg{width:18px;height:18px;fill:none;stroke:#4b5563;stroke-width:2}
+    .menu-item .label{
+      flex:1;
+      font-weight:650;
+    }
+    .menu-item .chev{
+      width:18px;height:18px;
+      fill:none;stroke:#9ca3af;stroke-width:2;
+      transition:transform .15s ease;
+    }
+
+    .menu-item.open{ background:var(--nav-open-bg); }
+    .menu-item.open .chev{ transform:rotate(180deg); stroke:#6b7280; }
+
+    .submenu{
+      margin:6px 0 10px 52px;
+      display:none;
+    }
+    .submenu.open{display:block;}
+    .submenu a{
+      display:block;
+      text-decoration:none;
+      color:#374151;
+      padding:10px 12px;
+      border-radius:12px;
+      font-weight:600;
+    }
+    .submenu a:hover{background:var(--nav-hover)}
+    .submenu a.active{
+      background:var(--nav-active-bg);
+      color:var(--blue);
+    }
+
+    .sidebar-divider{height:1px;background:var(--line);margin:12px 8px}
+
+    /* Main content area */
+    .content{
+      margin-left:var(--sidebar-w);
+      padding:18px 20px 70px;
+      max-width: 1400px;
+    }
+
+    .breadcrumb{
+      color:var(--muted);
+      font-size:13px;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      margin:4px 0 10px;
+    }
+    .crumb-dot{opacity:.5}
+
+    .page-head{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:16px;
+      margin-bottom:14px;
+    }
+    .page-title{
+      font-size:30px;
+      font-weight:750;
+      margin:0;
+      letter-spacing:-.2px;
+    }
+    .page-desc{
+      margin:4px 0 0;
+      color:var(--muted);
+      max-width:860px;
+      line-height:1.45;
+      font-size:14px;
+    }
+
+    .primary-btn{
+      height:40px;
+      padding:0 16px;
+      border-radius:12px;
+      border:0;
+      background:var(--blue);
+      color:#fff;
+      font-weight:650;
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      cursor:pointer;
+      box-shadow: 0 10px 20px rgba(31,87,255,.22);
+      white-space:nowrap;
+    }
+    .primary-btn:hover{background:var(--blue-2)}
+    .primary-btn svg{width:16px;height:16px;fill:none;stroke:#fff;stroke-width:2}
+
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow: 0 1px 0 rgba(17,24,39,.02);
+    }
+
+    .filters{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin:16px 0 12px;
+    }
+    .search-inline{
+      width:320px;
+      max-width:100%;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:10px 12px;
+    }
+    .search-inline input{
+      border:0;outline:0;width:100%;
+      font-size:14px;
+    }
+    .search-inline svg{
+      width:18px;height:18px;
+      stroke:#9ca3af;stroke-width:2;fill:none;
+    }
+
+    /* Table */
+    .table-wrap{
+      overflow:auto;
+      border-radius:var(--radius);
+    }
+    table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
+      min-width: 980px;
+      background:#fff;
+    }
+    thead th{
+      text-align:left;
+      font-size:12px;
+      color:#6b7280;
+      font-weight:700;
+      padding:14px 16px;
+      border-bottom:1px solid var(--line);
+      background:#fbfbfd;
+      position:sticky;
+      top:0;
+      z-index:1;
+      white-space:nowrap;
+    }
+    tbody td{
+      padding:14px 16px;
+      border-bottom:1px solid var(--line);
+      font-size:14px;
+      color:#111827;
+      white-space:nowrap;
+    }
+    tbody tr:hover{background:#fafafa}
+    .name{font-weight:650;}
+    .muted{color:var(--muted)}
+
+    .actions{
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .mini-ico{
+      width:34px;height:34px;
+      border-radius:10px;
+      border:1px solid var(--line);
+      background:#fff;
+      display:grid;place-items:center;
+      cursor:pointer;
+    }
+    .mini-ico:hover{background:#f3f4f6}
+    .mini-ico svg{
+      width:16px;height:16px;
+      fill:none;stroke:#374151;stroke-width:2;
+    }
+
+    /* Clickable row hint (only 1 row will use this) */
+    .clickable-row td{ cursor:pointer; }
+    .clickable-row .name{ color:#0f2ea6; }
+    .clickable-row:hover{ background:#f6f8ff; }
+
+    /* Help widget */
+    .help-widget{
+      position:fixed;
+      right:22px;
+      bottom:20px;
+      z-index:90;
+      display:flex;
+      flex-direction:column;
+      align-items:flex-end;
+      gap:10px;
+    }
+    .help-menu{
+      width:240px;
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:16px;
+      box-shadow:var(--shadow-soft);
+      overflow:hidden;
+      display:none;
+      position:relative;
+    }
+    .help-menu.open{display:block}
+    .help-menu .close-x{
+      position:absolute;
+      top:8px;
+      right:8px;
+      width:28px;height:28px;
+      border-radius:10px;
+      border:1px solid var(--line);
+      background:#fff;
+      cursor:pointer;
+      display:grid;place-items:center;
+    }
+    .help-menu .close-x:hover{background:#f3f4f6}
+    .help-menu .close-x svg{width:14px;height:14px;stroke:#6b7280;stroke-width:2;fill:none}
+
+    .help-item{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:12px 14px;
+      cursor:pointer;
+      font-weight:650;
+      color:#1f2937;
+      border-bottom:1px solid var(--line);
+    }
+    .help-item:last-child{border-bottom:0}
+    .help-item:hover{background:#f8fafc}
+    .help-item svg{width:18px;height:18px;fill:none;stroke:var(--blue);stroke-width:2}
+
+    .help-btn{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 14px;
+      border-radius:999px;
+      border:0;
+      background:var(--blue);
+      color:#fff;
+      font-weight:750;
+      cursor:pointer;
+      box-shadow: 0 12px 24px rgba(31,87,255,.28);
+    }
+    .help-btn:hover{background:var(--blue-2)}
+    .help-btn svg{width:18px;height:18px;fill:none;stroke:#fff;stroke-width:2}
+
+    @media (max-width: 980px){
+      .brand{min-width:auto}
+      .global-search{display:none}
+      .content{padding:16px 14px 80px}
+      .page-head{flex-direction:column;align-items:flex-start}
+      .filters{flex-direction:column;align-items:flex-start}
+      .search-inline{width:100%}
+      table{min-width:860px}
+      :root{ --sidebar-w: 250px; }
+      .drawer{ width: 92vw; }
+    }
+  
+    /* Views */
+    .view{ display:none; }
+    .view.active{ display:block; }
+
+    .detail-head{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:16px;
+      margin:8px 0 14px;
+    }
+    .back-btn{
+      height:36px;
+      padding:0 12px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:#fff;
+      cursor:pointer;
+      font-weight:800;
+      color:#374151;
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+    }
+    .back-btn:hover{background:#f3f4f6}
+    .back-btn svg{width:16px;height:16px;fill:none;stroke:#374151;stroke-width:2}
+
+    .page-actions{
+      display:flex;
+      gap:10px;
+      align-items:center;
+    }
+    .secondary-pill{
+      height:40px;
+      padding:0 14px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:#fff;
+      font-weight:900;
+      color:#374151;
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      cursor:default;
+    }
+    .secondary-pill svg{width:18px;height:18px;fill:none;stroke:#6b7280;stroke-width:2}
+
+    /* Detail cards */
+    .detail-grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+      margin-top:14px;
+    }
+    .detail-card{
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      background:#fff;
+      padding:14px 14px;
+    }
+    .detail-card .k{
+      font-size:12px;
+      color:#6b7280;
+      font-weight:900;
+      margin-bottom:10px;
+    }
+    .detail-card .v{
+      font-size:16px;
+      font-weight:900;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .detail-card .sub{
+      margin-top:8px;
+      font-size:12px;
+      color:var(--muted);
+      font-weight:750;
+      line-height:1.35;
+    }
+    .detail-card.wide{ grid-column: 1 / -1; }
+
+    @media (max-width: 980px){
+      .detail-grid{ grid-template-columns: 1fr; }
+      .detail-card.wide{ grid-column: auto; }
+    }
+
+  
+    /* Modal */
+    .modal-overlay{
+      position:fixed;
+      inset:0;
+      background:rgba(17,24,39,.35);
+      z-index:120;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+    }
+    .modal-overlay.open{ display:flex; }
+
+    .modal{
+      width: 520px;
+      max-width: 100%;
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:18px;
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .modal-head{
+      padding:16px 16px 12px;
+      border-bottom:1px solid var(--line);
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .modal-title{
+      margin:0;
+      font-size:18px;
+      font-weight:900;
+      letter-spacing:-.2px;
+    }
+    .modal-sub{
+      margin:6px 0 0;
+      color:var(--muted);
+      font-size:13px;
+      font-weight:700;
+      line-height:1.35;
+    }
+    .modal-body{
+      padding:14px 16px 16px;
+    }
+    .form-grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+    }
+    .form-field{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px 12px;
+      background:#fff;
+    }
+    .form-field .k{
+      font-size:12px;
+      color:#6b7280;
+      font-weight:900;
+      margin-bottom:8px;
+    }
+    .form-field .v{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      justify-content:space-between;
+    }
+    .form-field input, .form-field select{
+      width:100%;
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:10px 10px;
+      font-weight:800;
+      outline:none;
+      font-size:14px;
+      background:#fff;
+    }
+    .form-field input:focus, .form-field select:focus{
+      border-color: rgba(31,87,255,.5);
+      box-shadow: 0 0 0 4px rgba(31,87,255,.10);
+    }
+    .form-field.wide{ grid-column: 1 / -1; }
+    .hint{
+      font-size:12px;
+      color:var(--muted);
+      font-weight:700;
+      margin-top:8px;
+      line-height:1.35;
+    }
+    .modal-foot{
+      padding:12px 16px 16px;
+      border-top:1px solid var(--line);
+      display:flex;
+      justify-content:flex-end;
+      gap:10px;
+    }
+    .btn-secondary{
+      height:40px;
+      padding:0 14px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:#fff;
+      cursor:pointer;
+      font-weight:900;
+      color:#374151;
+    }
+    .btn-secondary:hover{background:#f3f4f6}
+
+    /* Toast */
+    .toast{
+      position:fixed;
+      left:50%;
+      bottom:24px;
+      transform:translateX(-50%) translateY(20px);
+      background:#111827;
+      color:#fff;
+      padding:10px 14px;
+      border-radius:999px;
+      font-weight:800;
+      font-size:13px;
+      box-shadow: 0 14px 30px rgba(0,0,0,.25);
+      opacity:0;
+      pointer-events:none;
+      transition:opacity .18s ease, transform .18s ease;
+      z-index:140;
+      max-width: 90vw;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .toast.show{
+      opacity:1;
+      transform:translateX(-50%) translateY(0);
+    }
+
+    @media (max-width: 980px){
+      .form-grid{ grid-template-columns: 1fr; }
+      .form-field.wide{ grid-column:auto; }
+    }
+
+    /* Stock count */
+    .toolbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      flex-wrap:wrap;
+      margin-top:14px;
+    }
+    .control-row{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .select, .input{
+      height:40px;
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:0 12px;
+      background:#fff;
+      font-weight:800;
+      color:#111827;
+      outline:none;
+      min-width: 220px;
+    }
+    .select:focus, .input:focus{
+      border-color: rgba(31,87,255,.5);
+      box-shadow: 0 0 0 4px rgba(31,87,255,.10);
+    }
+    .input.small{ min-width: 140px; width:140px; }
+    .select.small{ min-width: 180px; }
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:#fff;
+      font-size:12px;
+      font-weight:900;
+      color:#374151;
+    }
+    .pill .dot{
+      width:8px;height:8px;border-radius:999px;background:#9ca3af;
+    }
+    .banner{
+      border:1px solid var(--line);
+      background:#fff;
+      border-radius:18px;
+      padding:12px 14px;
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+      margin-top:14px;
+      box-shadow: var(--shadow-soft);
+    }
+    .banner .b-title{ font-weight:950; }
+    .banner .b-sub{ color:var(--muted); font-weight:750; font-size:13px; margin-top:4px; line-height:1.35; }
+    .banner.warn{
+      border-color:#fde68a;
+      background:#fffbeb;
+    }
+    .banner.warn .dot{ background:#f59e0b; box-shadow:0 0 0 3px rgba(245,158,11,.18); }
+    .banner.ok{
+      border-color:#bbf7d0;
+      background:#f0fdf4;
+    }
+    .banner.ok .dot{ background:#10b981; box-shadow:0 0 0 3px rgba(16,185,129,.16); }
+
+    .count-table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:18px;
+      overflow:hidden;
+      margin-top:14px;
+    }
+    .count-table thead th{
+      text-align:left;
+      font-size:13px;
+      color:#6b7280;
+      font-weight:900;
+      padding:14px 14px;
+      border-bottom:1px solid var(--line);
+      background:#fbfbfd;
+      white-space:nowrap;
+    }
+    .count-table tbody td{
+      padding:14px 14px;
+      border-bottom:1px solid #eef2f7;
+      font-weight:800;
+      vertical-align:middle;
+      white-space:nowrap;
+    }
+    .count-table tbody tr:last-child td{ border-bottom:none; }
+    .mono{ font-variant-numeric: tabular-nums; }
+    .cell-muted{ color:var(--muted); font-weight:750; }
+    .td-input{
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+    .td-input input{
+      height:36px;
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:0 10px;
+      width:110px;
+      outline:none;
+      font-weight:900;
+      background:#fff;
+    }
+    .td-input input:focus{
+      border-color: rgba(31,87,255,.5);
+      box-shadow: 0 0 0 4px rgba(31,87,255,.10);
+    }
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:950;
+      border:1px solid var(--line);
+      background:#fff;
+      color:#374151;
+    }
+    .badge .dot{
+      width:8px;height:8px;border-radius:999px;background:#9ca3af;
+    }
+    .badge.ok{
+      border-color:#bbf7d0;
+      background:#f0fdf4;
+      color:#0f766e;
+    }
+    .badge.ok .dot{ background:#10b981; box-shadow:0 0 0 3px rgba(16,185,129,.16); }
+    .badge.review{
+      border-color:#fde68a;
+      background:#fffbeb;
+      color:#92400e;
+    }
+    .badge.review .dot{ background:#f59e0b; box-shadow:0 0 0 3px rgba(245,158,11,.18); }
+    .badge.pending{
+      border-color:#e5e7eb;
+      background:#fff;
+      color:#374151;
+    }
+    .badge.pending .dot{ background:#9ca3af; }
+
+    /* Stepper */
+    .stepper{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:12px 14px;
+      border:1px solid var(--line);
+      background:#fff;
+      border-radius:18px;
+      box-shadow: var(--shadow-soft);
+      margin-top:14px;
+      flex-wrap:wrap;
+    }
+    .step{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:#fff;
+      font-weight:900;
+      font-size:13px;
+      color:#374151;
+    }
+    .step .num{
+      width:22px;height:22px;border-radius:999px;
+      display:grid;place-items:center;
+      border:1px solid var(--line);
+      background:#fbfbfd;
+      font-size:12px;
+      font-weight:950;
+      color:#6b7280;
+    }
+    .step.active{
+      border-color: rgba(31,87,255,.35);
+      background: var(--nav-open-bg);
+      color:#0b2bd6;
+    }
+    .step.active .num{
+      background: rgba(31,87,255,.10);
+      border-color: rgba(31,87,255,.35);
+      color:#0b2bd6;
+    }
+    .step.done{
+      border-color:#bbf7d0;
+      background:#f0fdf4;
+      color:#0f766e;
+    }
+    .step.done .num{
+      background:#ecfdf5;
+      border-color:#bbf7d0;
+      color:#0f766e;
+    }
+    .step-sep{
+      width:26px;height:2px;
+      background:#e5e7eb;
+      border-radius:999px;
+    }
+
+    /* Tabs / chips */
+    .chips{
+      display:flex;
+      gap:8px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .chip{
+      height:34px;
+      padding:0 12px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:#fff;
+      cursor:pointer;
+      font-weight:900;
+      color:#374151;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      font-size:13px;
+    }
+    .chip:hover{ background:#f3f4f6; }
+    .chip.active{
+      border-color: rgba(31,87,255,.35);
+      background: var(--nav-open-bg);
+      color:#0b2bd6;
+    }
+    .chip .count{
+      padding:2px 8px;
+      border-radius:999px;
+      background:#f3f4f6;
+      font-size:12px;
+      font-weight:950;
+      color:#374151;
+    }
+    .chip.active .count{
+      background: rgba(31,87,255,.12);
+      color:#0b2bd6;
+    }
+
+    /* Modal (reuse) */
+    .modal-overlay{
+      position:fixed;
+      inset:0;
+      background:rgba(17,24,39,.35);
+      z-index:120;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+    }
+    .modal-overlay.open{ display:flex; }
+    .modal{
+      width: 560px;
+      max-width: 100%;
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:18px;
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .modal-head{
+      padding:16px 16px 12px;
+      border-bottom:1px solid var(--line);
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .modal-title{
+      margin:0;
+      font-size:18px;
+      font-weight:900;
+      letter-spacing:-.2px;
+    }
+    .modal-sub{
+      margin:6px 0 0;
+      color:var(--muted);
+      font-size:13px;
+      font-weight:700;
+      line-height:1.35;
+    }
+    .modal-body{ padding:14px 16px 16px; }
+    .form-grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+    }
+    .form-field{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px 12px;
+      background:#fff;
+    }
+    .form-field .k{
+      font-size:12px;
+      color:#6b7280;
+      font-weight:900;
+      margin-bottom:8px;
+    }
+    .form-field .v{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      justify-content:space-between;
+    }
+    .form-field input, .form-field select{
+      width:100%;
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:10px 10px;
+      font-weight:800;
+      outline:none;
+      font-size:14px;
+      background:#fff;
+    }
+    .form-field input:focus, .form-field select:focus{
+      border-color: rgba(31,87,255,.5);
+      box-shadow: 0 0 0 4px rgba(31,87,255,.10);
+    }
+    .form-field.wide{ grid-column: 1 / -1; }
+    .modal-foot{
+      padding:12px 16px 16px;
+      border-top:1px solid var(--line);
+      display:flex;
+      justify-content:flex-end;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .btn-secondary{
+      height:40px;
+      padding:0 14px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:#fff;
+      cursor:pointer;
+      font-weight:900;
+      color:#374151;
+    }
+    .btn-secondary:hover{background:#f3f4f6}
+    .toast{
+      position:fixed;
+      left:50%;
+      bottom:24px;
+      transform:translateX(-50%) translateY(20px);
+      background:#111827;
+      color:#fff;
+      padding:10px 14px;
+      border-radius:999px;
+      font-weight:800;
+      font-size:13px;
+      box-shadow: 0 14px 30px rgba(0,0,0,.25);
+      opacity:0;
+      pointer-events:none;
+      transition:opacity .18s ease, transform .18s ease;
+      z-index:140;
+      max-width: 90vw;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .toast.show{
+      opacity:1;
+      transform:translateX(-50%) translateY(0);
+    }
+
+    /* Count table tweaks */
+    .count-table tbody td{ white-space:normal; }
+    .line-actions{
+      display:flex;
+      align-items:center;
+      justify-content:flex-end;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .link-btn{
+      border:none;
+      background:transparent;
+      color:#0b2bd6;
+      font-weight:950;
+      cursor:pointer;
+      padding:0;
+      font-size:13px;
+    }
+    .link-btn:hover{ text-decoration:underline; }
+    .mini-muted{ color:var(--muted); font-weight:750; font-size:12px; margin-top:4px; }
+    .batch-box{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:10px 10px;
+      background:#fbfbfd;
+      margin-top:10px;
+    }
+    .batch-row{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+      padding:8px 0;
+      border-bottom:1px dashed #e5e7eb;
+    }
+    .batch-row:last-child{ border-bottom:none; }
+    .batch-row input{
+      height:36px;
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:0 10px;
+      outline:none;
+      font-weight:900;
+      background:#fff;
+    }
+    .batch-row input:focus{
+      border-color: rgba(31,87,255,.5);
+      box-shadow: 0 0 0 4px rgba(31,87,255,.10);
+    }
+    .batch-row .qty{ width:120px; }
+    .batch-row .date{ width:170px; }
+    .tag{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:950;
+      border:1px solid var(--line);
+      background:#fff;
+      color:#374151;
+      white-space:nowrap;
+    }
+    .tag .dot{ width:8px;height:8px;border-radius:999px;background:#9ca3af; }
+    .tag.counted{
+      border-color:#bbf7d0;
+      background:#f0fdf4;
+      color:#0f766e;
+    }
+    .tag.counted .dot{ background:#10b981; box-shadow:0 0 0 3px rgba(16,185,129,.16); }
+    .tag.not{
+      border-color:#e5e7eb;
+      background:#fff;
+      color:#374151;
+    }
+    .tag.review{
+      border-color:#fde68a;
+      background:#fffbeb;
+      color:#92400e;
+    }
+    .tag.review .dot{ background:#f59e0b; box-shadow:0 0 0 3px rgba(245,158,11,.18); }
+    .right-actions{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      justify-content:flex-end;
+      flex-wrap:wrap;
+    }
+    .impact{
+      font-weight:950;
+      color:#111827;
+      font-size:13px;
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:999px;
+      padding:8px 10px;
+    }
+    .hidden{ display:none !important; }
+
+    @media (max-width: 980px){
+      .form-grid{ grid-template-columns: 1fr; }
+      .form-field.wide{ grid-column:auto; }
+    }
+
+  </style>
+</head>
+<body>
+<!-- Topbar -->
+  <header class="topbar">
+    <div class="brand">
+      <div class="app-icon" title="App">
+        <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="3" y="3" width="8" height="8" rx="2" fill="white" opacity=".95"></rect>
+          <rect x="13" y="3" width="8" height="8" rx="2" fill="white" opacity=".95"></rect>
+          <rect x="3" y="13" width="8" height="8" rx="2" fill="white" opacity=".95"></rect>
+          <rect x="13" y="13" width="8" height="8" rx="2" fill="white" opacity=".95"></rect>
+        </svg>
+      </div>
+      <div class="title">
+        Komodo Resort New
+        <svg class="caret" viewBox="0 0 20 20" aria-hidden="true">
+          <path d="M5 7l5 6 5-6" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+      </div>
+    </div>
+
+    <div class="global-search">
+      <div class="searchbox">
+        <svg class="magnify" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="7" fill="none" stroke="#111827" stroke-width="2"></circle>
+          <path d="M20 20l-3.5-3.5" fill="none" stroke="#111827" stroke-width="2" stroke-linecap="round"></path>
+        </svg>
+        <input type="text" placeholder="Search" />
+      </div>
+    </div>
+
+    <div class="top-actions">
+      <div class="icon-btn" title="Calendar">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M7 3v3M17 3v3" />
+          <path d="M4 7h16" />
+          <rect x="4" y="5" width="16" height="16" rx="3" />
+        </svg>
+      </div>
+      <div class="icon-btn" title="Settings">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"></path>
+          <path d="M19.4 15a7.8 7.8 0 0 0 .1-2l2-1.3-2-3.4-2.3.8a7.6 7.6 0 0 0-1.7-1l-.3-2.4H9l-.3 2.4a7.6 7.6 0 0 0-1.7 1l-2.3-.8-2 3.4 2 1.3a7.8 7.8 0 0 0 .1 2l-2 1.3 2 3.4 2.3-.8a7.6 7.6 0 0 0 1.7 1l.3 2.4h6l.3-2.4a7.6 7.6 0 0 0 1.7-1l2.3.8 2-3.4-2-1.3Z"></path>
+        </svg>
+      </div>
+      <div class="icon-btn" title="Help">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 18h.01"></path>
+          <path d="M9.1 9a3 3 0 1 1 5.8 1c0 2-3 2-3 4"></path>
+          <circle cx="12" cy="12" r="9"></circle>
+        </svg>
+      </div>
+      <div class="avatar" title="User">HY</div>
+    </div>
+  </header>
+
+<!-- Fixed Sidebar -->
+  <aside class="sidebar">
+    <div class="menu-group">
+      <div class="menu-item" data-link="#">
+        <div class="ico">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round"></path>
+          </svg>
+        </div>
+        <div class="label">Menu</div>
+      </div>
+
+      <div class="menu-item" data-link="#">
+        <div class="ico">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 11l8-7 8 7v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"></path>
+            <path d="M9 22V12h6v10"></path>
+          </svg>
+        </div>
+        <div class="label">Dashboard</div>
+      </div>
+
+      <!-- Products (expandable) -->
+      <div class="menu-item" data-toggle="products">
+        <div class="ico">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M7 7h10v10H7z"></path>
+            <path d="M9 11h6M9 14h4" stroke-linecap="round"></path>
+          </svg>
+        </div>
+        <div class="label">Products</div>
+        <svg class="chev" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+      </div>
+      <div class="submenu" data-submenu="products">
+        <a href="#" onclick="return false;">Products</a>
+        <a href="#" onclick="return false;">Categories</a>
+        <a href="#" onclick="return false;">Combinations</a>
+        <a href="ingredients_v14_with_procurement.html">Ingredients</a>
+        <a href="#" onclick="return false;">Unit Types</a>
+      </div>
+
+      <!-- Stock Management (expandable) -->
+      <div class="menu-item open" data-toggle="stock">
+        <div class="ico">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round"></path>
+            <path d="M7 7v10M12 7v10M17 7v10"></path>
+          </svg>
+        </div>
+        <div class="label">Stock management</div>
+        <svg class="chev" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+      </div>
+      <div class="submenu open" data-submenu="stock">
+        <a class="submenu-link" href="ingredients_v14_with_procurement.html"><span>Ingredients</span></a>
+        <a class="submenu-link active" href="stock_count_v4_with_procurement.html"><span>Stock count</span></a>
+        <a class="submenu-link" href="#" onclick="return false;"><span>Recipes</span></a>
+        <a class="submenu-link" href="#" onclick="return false;"><span>Purchase Orders</span></a>
+        <a class="submenu-link" href="#" onclick="return false;"><span>Receiving</span></a>
+        <a class="submenu-link" href="#" onclick="return false;"><span>Vendor Credits</span></a>
+      </div>
+      <div class="menu-item" data-toggle="procurement">
+        <div class="menu-icon">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6 7h15l-2 10H8L6 7z" stroke-linejoin="round"></path>
+            <path d="M6 7l-2-3H2" stroke-linecap="round"></path>
+            <path d="M9 20a1 1 0 100-2 1 1 0 000 2zM18 20a1 1 0 100-2 1 1 0 000 2z"></path>
+          </svg>
+        </div>
+        <span class="menu-label">Procurement</span>
+        <div class="chev">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18l6-6-6-6" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+        </div>
+      </div>
+      
+      <div class="submenu" data-submenu="procurement">
+        <a class="submenu-link" href="procurement_overview_v2.html"><span>Overview</span></a>
+        <a class="submenu-link" href="procurement_pr_v1.html"><span>Purchase requisitions</span></a>
+        <a class="submenu-link" href="procurement_po_v1.html"><span>Purchase orders</span></a>
+        <a class="submenu-link" href="procurement_receiving_v1.html"><span>Receiving</span></a>
+        <a class="submenu-link" href="#"><span>Suppliers</span></a>
+      </div>
+
+
+
+      <div class="sidebar-divider"></div>
+
+      <div class="menu-item" data-link="#">
+        <div class="ico">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M3 9h18"></path>
+            <path d="M7 12h10"></path>
+            <path d="M5 15h14"></path>
+          </svg>
+        </div>
+        <div class="label">Floors</div>
+        <svg class="chev" viewBox="0 0 24 24" aria-hidden="true" style="opacity:.65">
+          <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+      </div>
+
+      <div class="menu-item" data-link="#">
+        <div class="ico">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="6" y="3" width="12" height="14" rx="2"></rect>
+            <path d="M8 7h8M8 10h8M8 13h6" stroke-linecap="round"></path>
+            <path d="M8 21h8" stroke-linecap="round"></path>
+          </svg>
+        </div>
+        <div class="label">Printing</div>
+        <svg class="chev" viewBox="0 0 24 24" aria-hidden="true" style="opacity:.65">
+          <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+      </div>
+
+      <div class="menu-item" data-link="#">
+        <div class="ico">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="4" y="3" width="16" height="18" rx="3"></rect>
+            <path d="M8 8h8M8 12h8M8 16h6" stroke-linecap="round"></path>
+          </svg>
+        </div>
+        <div class="label">Payments</div>
+        <svg class="chev" viewBox="0 0 24 24" aria-hidden="true" style="opacity:.65">
+          <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+      </div>
+
+      <div class="menu-item" data-toggle="settings">
+        <div class="ico">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"></path>
+            <path d="M19.4 15a7.8 7.8 0 0 0 .1-2l2-1.3-2-3.4-2.3.8a7.6 7.6 0 0 0-1.7-1l-.3-2.4H9l-.3 2.4a7.6 7.6 0 0 0-1.7 1l-2.3-.8-2 3.4 2 1.3a7.8 7.8 0 0 0 .1 2l-2 1.3 2 3.4 2.3-.8a7.6 7.6 0 0 0 1.7 1l.3 2.4h6l.3-2.4a7.6 7.6 0 0 0 1.7-1l2.3.8 2-3.4-2-1.3Z"></path>
+          </svg>
+        </div>
+        <div class="label">Settings</div>
+        <svg class="chev" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+      </div>
+      <div class="submenu" data-submenu="settings">
+        <a href="#" onclick="return false;">General</a>
+        <a href="#" onclick="return false;">Users</a>
+        <a href="#" onclick="return false;">Integrations</a>
+      </div>
+    </div>
+  </aside>
+
+
+  <!-- Main content -->
+  <main class="content">
+    <div class="breadcrumb">
+      <span>Stock management</span>
+      <span class="crumb-dot">›</span>
+      <span>Stock count</span>
+    </div>
+
+    <div class="page-head">
+      <div>
+        <h1 class="page-title">Stock count</h1>
+        <p class="page-desc">
+          Create a stock count session, enter counted quantities (and batches/expiry if needed), then review variances before posting adjustments.
+        </p>
+      </div>
+
+      <div class="right-actions">
+        <button class="primary-btn" id="btnStartSession">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 5v14M5 12h14" stroke-linecap="round"></path>
+          </svg>
+          Start stock count
+        </button>
+      </div>
+    </div>
+
+    <!-- Stepper -->
+    <div class="stepper" aria-label="Stock count steps">
+      <div class="step active" id="step1"><span class="num">1</span> Setup</div>
+      <div class="step-sep"></div>
+      <div class="step" id="step2"><span class="num">2</span> Count</div>
+      <div class="step-sep"></div>
+      <div class="step" id="step3"><span class="num">3</span> Review &amp; Post</div>
+
+      <div class="pill" style="margin-left:auto;" id="sessionPill">
+        <span class="dot"></span>
+        No active session
+      </div>
+    </div>
+
+    <!-- STEP 2: COUNT (default empty until session created) -->
+    <section id="viewCount" class="card" style="padding:14px;margin-top:14px; display:none;">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+        <div>
+          <div style="font-weight:950;font-size:16px;">Count items</div>
+          <div class="mini-muted" id="countSub">
+            Session snapshot: <span class="mono" id="snapshotTime">2026-01-20 02:05</span> · Scope: <span id="scopeLabel">Full store</span>
+          </div>
+        </div>
+        <div class="right-actions">
+          <div class="chips" id="chips">
+            <button class="chip active" data-filter="not">Not counted <span class="count" id="cNot">5</span></button>
+            <button class="chip" data-filter="counted">Counted <span class="count" id="cCounted">0</span></button>
+            <button class="chip" data-filter="all">All <span class="count" id="cAll">5</span></button>
+          </div>
+          <input class="input" id="searchCount" placeholder="Search / scan ingredient…" style="min-width:260px;" />
+          <button class="primary-btn" id="btnGoReview" style="box-shadow:none;">
+            Review &amp; post
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M9 18l6-6-6-6" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <table class="count-table" aria-label="Count table">
+        <thead>
+          <tr>
+            <th style="min-width:220px;">Ingredient</th>
+            <th>Category</th>
+            <th>Unit</th>
+            <th style="min-width:240px;">Count entry</th>
+            <th style="min-width:220px;">Batches / expiry</th>
+            <th style="min-width:120px;">Status</th>
+            <th style="min-width:120px;text-align:right;">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="countBody">
+          <tr data-name="Anise Star" data-category="Spices" data-expected-qty="790" data-expected-exp="2026-02-14">
+            <td class="name" style="font-weight:950;color:#0b2bd6;">Anise Star
+              <div class="mini-muted">Expected (tap to view): <span class="mono">790 g</span> · <span class="mono">2026-02-14</span></div>
+            </td>
+            <td class="cell-muted">Spices</td>
+            <td class="cell-muted">Gram (g)</td>
+            <td>
+              <div class="td-input">
+                <input type="number" min="0" step="1" class="cntQty" value="" placeholder="Enter counted qty" />
+                <span class="cell-muted">g</span>
+              </div>
+              <div class="mini-muted">Use total quantity (you can also add batches).</div>
+            </td>
+            <td>
+              <button class="btn-secondary btnBatch" style="height:36px;border-radius:12px;">Add batch</button>
+              <div class="mini-muted">Optional: log nearest expiry per batch.</div>
+            </td>
+            <td><span class="tag not"><span class="dot"></span> Not counted</span></td>
+            <td style="text-align:right;">
+              <button class="link-btn btnSave">Save</button>
+            </td>
+          </tr>
+
+          <tr data-name="Avocado" data-category="Produce" data-expected-qty="0" data-expected-exp="">
+            <td style="font-weight:950;">Avocado
+              <div class="mini-muted">Expected (tap to view): <span class="mono">0 g</span> · <span class="mono">—</span></div>
+            </td>
+            <td class="cell-muted">Produce</td>
+            <td class="cell-muted">Gram (g)</td>
+            <td>
+              <div class="td-input">
+                <input type="number" min="0" step="1" class="cntQty" value="" placeholder="Enter counted qty" />
+                <span class="cell-muted">g</span>
+              </div>
+            </td>
+            <td>
+              <button class="btn-secondary btnBatch" style="height:36px;border-radius:12px;">Add batch</button>
+              <div class="mini-muted">Optional</div>
+            </td>
+            <td><span class="tag not"><span class="dot"></span> Not counted</span></td>
+            <td style="text-align:right;"><button class="link-btn btnSave">Save</button></td>
+          </tr>
+
+          <tr data-name="Bacon" data-category="Meat" data-expected-qty="0" data-expected-exp="">
+            <td style="font-weight:950;">Bacon
+              <div class="mini-muted">Expected (tap to view): <span class="mono">0 g</span> · <span class="mono">—</span></div>
+            </td>
+            <td class="cell-muted">Meat</td>
+            <td class="cell-muted">Gram (g)</td>
+            <td>
+              <div class="td-input">
+                <input type="number" min="0" step="1" class="cntQty" value="" placeholder="Enter counted qty" />
+                <span class="cell-muted">g</span>
+              </div>
+            </td>
+            <td>
+              <button class="btn-secondary btnBatch" style="height:36px;border-radius:12px;">Add batch</button>
+              <div class="mini-muted">Optional</div>
+            </td>
+            <td><span class="tag not"><span class="dot"></span> Not counted</span></td>
+            <td style="text-align:right;"><button class="link-btn btnSave">Save</button></td>
+          </tr>
+
+          <tr data-name="Balsamic Vinegar" data-category="Sauces" data-expected-qty="0" data-expected-exp="">
+            <td style="font-weight:950;">Balsamic Vinegar
+              <div class="mini-muted">Expected (tap to view): <span class="mono">0 g</span> · <span class="mono">—</span></div>
+            </td>
+            <td class="cell-muted">Sauces</td>
+            <td class="cell-muted">Gram (g)</td>
+            <td>
+              <div class="td-input">
+                <input type="number" min="0" step="1" class="cntQty" value="" placeholder="Enter counted qty" />
+                <span class="cell-muted">g</span>
+              </div>
+            </td>
+            <td>
+              <button class="btn-secondary btnBatch" style="height:36px;border-radius:12px;">Add batch</button>
+              <div class="mini-muted">Optional</div>
+            </td>
+            <td><span class="tag not"><span class="dot"></span> Not counted</span></td>
+            <td style="text-align:right;"><button class="link-btn btnSave">Save</button></td>
+          </tr>
+
+          <tr data-name="Butter" data-category="Dairy" data-expected-qty="0" data-expected-exp="">
+            <td style="font-weight:950;">Butter
+              <div class="mini-muted">Expected (tap to view): <span class="mono">0 g</span> · <span class="mono">—</span></div>
+            </td>
+            <td class="cell-muted">Dairy</td>
+            <td class="cell-muted">Gram (g)</td>
+            <td>
+              <div class="td-input">
+                <input type="number" min="0" step="1" class="cntQty" value="" placeholder="Enter counted qty" />
+                <span class="cell-muted">g</span>
+              </div>
+            </td>
+            <td>
+              <button class="btn-secondary btnBatch" style="height:36px;border-radius:12px;">Add batch</button>
+              <div class="mini-muted">Optional</div>
+            </td>
+            <td><span class="tag not"><span class="dot"></span> Not counted</span></td>
+            <td style="text-align:right;"><button class="link-btn btnSave">Save</button></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="hint" style="margin-top:10px;">
+        Counting tip: keep it fast—search/scan, enter quantity, optionally add a batch with expiry, then Save. Review happens in the next step.
+      </div>
+    </section>
+
+    <!-- STEP 3: REVIEW -->
+    <section id="viewReview" class="card" style="padding:14px;margin-top:14px; display:none;">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+        <div>
+          <div style="font-weight:950;font-size:16px;">Review &amp; post</div>
+          <div class="mini-muted">
+            Compare expected vs counted. Flagged items should be recounted before posting adjustments (prototype).
+          </div>
+        </div>
+        <div class="right-actions">
+          <button class="btn-secondary" id="btnBackCount" style="height:40px;border-radius:12px;">Back to counting</button>
+          <button class="primary-btn" id="btnPost" style="box-shadow:none;">
+            Post adjustments
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M9 18l6-6-6-6" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="banner ok" id="reviewBanner" style="margin-top:12px; display:flex;">
+        <div style="display:flex;gap:10px;align-items:flex-start;">
+          <div class="dot" style="width:10px;height:10px;border-radius:999px;margin-top:4px;"></div>
+          <div>
+            <div class="b-title" id="reviewTitle">Ready for review</div>
+            <div class="b-sub" id="reviewSub">Run review to see variances.</div>
+          </div>
+        </div>
+        <div class="impact" id="impactPill">Estimated impact: IDR —</div>
+      </div>
+
+      <div class="chips" style="margin-top:12px;">
+        <button class="chip active" data-rfilter="variance">Variance only <span class="count" id="rVar">0</span></button>
+        <button class="chip" data-rfilter="review">Needs recount <span class="count" id="rReview">0</span></button>
+        <button class="chip" data-rfilter="all">All counted <span class="count" id="rAll">0</span></button>
+        <button class="primary-btn" id="btnRunReview" style="height:34px;padding:0 12px;border-radius:999px;box-shadow:none;">
+          Run review
+        </button>
+      </div>
+
+      <table class="count-table" aria-label="Review table" id="reviewTable">
+        <thead>
+          <tr>
+            <th style="min-width:220px;">Ingredient</th>
+            <th>Expected qty</th>
+            <th>Counted qty</th>
+            <th>Variance</th>
+            <th>Expected expiry</th>
+            <th>Counted expiry</th>
+            <th>Status</th>
+            <th style="text-align:right;">Action</th>
+          </tr>
+        </thead>
+        <tbody id="reviewBody">
+          <!-- filled by JS -->
+        </tbody>
+      </table>
+
+      <div class="hint" style="margin-top:10px;">
+        Note: “Needs recount” is suggested when qty variance &gt; 15% or counted expiry is 7+ days earlier than expected.
+      </div>
+    </section>
+
+    <!-- Empty state -->
+    <section id="viewEmpty" class="card" style="padding:16px;margin-top:14px;">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+        <div>
+          <div style="font-weight:950;font-size:16px;">No active stock count</div>
+          <div class="mini-muted" style="margin-top:6px;">
+            Start a new stock count session to freeze a snapshot and begin counting.
+          </div>
+        </div>
+        <button class="primary-btn" id="btnStartSession2" style="box-shadow:none;">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 5v14M5 12h14" stroke-linecap="round"></path>
+          </svg>
+          Start stock count
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <!-- Setup modal -->
+  <div class="modal-overlay" id="setupOverlay" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="setupTitle">
+      <div class="modal-head">
+        <div>
+          <h3 class="modal-title" id="setupTitle">Create stock count session</h3>
+          <div class="modal-sub">
+            We’ll snapshot current inventory as “Expected” and create a counting session (prototype).
+          </div>
+        </div>
+        <button class="ghost-btn" id="btnSetupClose" title="Close">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"></path>
+          </svg>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="form-field">
+            <div class="k">Scope</div>
+            <div class="v">
+              <select id="setupScope">
+                <option value="all">Full store</option>
+                <option value="category">Single category</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-field" id="setupCatWrap" style="display:none;">
+            <div class="k">Category</div>
+            <div class="v">
+              <select id="setupCategory">
+                <option value="Spices">Spices</option>
+                <option value="Produce">Produce</option>
+                <option value="Meat">Meat</option>
+                <option value="Sauces">Sauces</option>
+                <option value="Dairy">Dairy</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-field">
+            <div class="k">Location</div>
+            <div class="v">
+              <select id="setupLocation">
+                <option>Main store</option>
+                <option>Bar</option>
+                <option>Kitchen prep</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-field">
+            <div class="k">Snapshot time</div>
+            <div class="v">
+              <input type="text" id="setupSnapshot" value="2026-01-20 02:05" disabled />
+            </div>
+          </div>
+
+          <div class="form-field wide">
+            <div class="k">Note (optional)</div>
+            <div class="v">
+              <input id="setupNote" placeholder="e.g. morning count before service" />
+            </div>
+            <div class="hint">This is a UI prototype. No real inventory posting happens.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-foot">
+        <button class="btn-secondary" id="btnSetupCancel">Cancel</button>
+        <button class="primary-btn" id="btnSetupCreate" style="box-shadow:none;">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M5 12l4 4L19 6" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+          Create session
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Batch modal -->
+  <div class="modal-overlay" id="batchOverlay" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="batchTitle">
+      <div class="modal-head">
+        <div>
+          <h3 class="modal-title" id="batchTitle">Batches &amp; expiry</h3>
+          <div class="modal-sub" id="batchSub">Log one or more batches. Nearest expiry will be used in review (prototype).</div>
+        </div>
+        <button class="ghost-btn" id="btnBatchClose" title="Close">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"></path>
+          </svg>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="batch-box" id="batchBox"></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;gap:10px;flex-wrap:wrap;">
+          <button class="btn-secondary" id="btnAddBatch" style="height:40px;border-radius:12px;">Add another batch</button>
+          <div class="pill" id="batchHint"><span class="dot"></span> Nearest expiry will be used</div>
+        </div>
+      </div>
+
+      <div class="modal-foot">
+        <button class="btn-secondary" id="btnBatchCancel">Cancel</button>
+        <button class="primary-btn" id="btnBatchSave" style="box-shadow:none;">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M5 12l4 4L19 6" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+          Save batches
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">Saved</div>
+
+
+<!-- Help widget -->
+  <div class="help-widget">
+    <div class="help-menu" id="helpMenu">
+      <button class="close-x" id="helpClose" title="Close">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"></path>
+        </svg>
+      </button>
+      <div class="help-item">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="9"></circle>
+          <path d="M12 18h.01"></path>
+          <path d="M9.1 9a3 3 0 1 1 5.8 1c0 2-3 2-3 4"></path>
+        </svg>
+        Help &amp; Support
+      </div>
+      <div class="help-item">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 4h16v12H7l-3 3V4z"></path>
+          <path d="M8 9h8M8 12h6" stroke-linecap="round"></path>
+        </svg>
+        Give Feedback
+      </div>
+    </div>
+
+    
+
+
+  
+
+
+  
+
+
+  <script>
+    // Sidebar accordion toggles
+    document.querySelectorAll('.menu-item[data-toggle]').forEach(item => {
+      item.addEventListener('click', () => {
+        const key = item.getAttribute('data-toggle');
+        const submenu = document.querySelector('.submenu[data-submenu="'+key+'"]');
+        if (!submenu) return;
+        const isOpen = submenu.classList.contains('open');
+        submenu.classList.toggle('open', !isOpen);
+        item.classList.toggle('open', !isOpen);
+      });
+    });
+
+    // Help menu toggle
+    const helpBtn = document.getElementById('helpBtn');
+    const helpMenu = document.getElementById('helpMenu');
+    const helpClose = document.getElementById('helpClose');
+    function closeHelp(){ if (helpMenu) helpMenu.classList.remove('open'); }
+    if (helpBtn){
+      helpBtn.addEventListener('click', (e) => { e.stopPropagation(); helpMenu.classList.toggle('open'); });
+    }
+    if (helpClose){
+      helpClose.addEventListener('click', (e) => { e.stopPropagation(); closeHelp(); });
+    }
+    document.addEventListener('click', closeHelp);
+
+    // Toast
+    const toast = document.getElementById('toast');
+    function showToast(msg){
+      if (!toast) return;
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 1600);
+    }
+
+    // Stepper
+    const step1 = document.getElementById('step1');
+    const step2 = document.getElementById('step2');
+    const step3 = document.getElementById('step3');
+    function setStep(active){
+      [step1, step2, step3].forEach((el, idx) => {
+        el.classList.remove('active');
+        el.classList.remove('done');
+        const n = idx + 1;
+        if (n < active) el.classList.add('done');
+        if (n === active) el.classList.add('active');
+      });
+    }
+
+    // Views
+    const viewEmpty = document.getElementById('viewEmpty');
+    const viewCount = document.getElementById('viewCount');
+    const viewReview = document.getElementById('viewReview');
+    function showView(which){
+      viewEmpty.style.display = (which === 'empty') ? '' : 'none';
+      viewCount.style.display = (which === 'count') ? '' : 'none';
+      viewReview.style.display = (which === 'review') ? '' : 'none';
+    }
+
+    // Session state (UI only)
+    let session = null; // {scope, category, location, snapshot, note}
+    const sessionPill = document.getElementById('sessionPill');
+    const snapshotTime = document.getElementById('snapshotTime');
+    const scopeLabel = document.getElementById('scopeLabel');
+    const countSub = document.getElementById('countSub');
+
+    function updateSessionPill(){
+      if (!session){
+        sessionPill.innerHTML = '<span class="dot"></span> No active session';
+        return;
+      }
+      sessionPill.innerHTML = '<span class="dot" style="background:#10b981;box-shadow:0 0 0 3px rgba(16,185,129,.16)"></span> Active: ' 
+        + (session.scope === 'all' ? 'Full store' : ('Category: ' + session.category)) + ' · ' + session.location;
+    }
+
+    // Setup modal
+    const btnStartSession = document.getElementById('btnStartSession');
+    const btnStartSession2 = document.getElementById('btnStartSession2');
+    const setupOverlay = document.getElementById('setupOverlay');
+    const btnSetupClose = document.getElementById('btnSetupClose');
+    const btnSetupCancel = document.getElementById('btnSetupCancel');
+    const btnSetupCreate = document.getElementById('btnSetupCreate');
+    const setupScope = document.getElementById('setupScope');
+    const setupCatWrap = document.getElementById('setupCatWrap');
+    const setupCategory = document.getElementById('setupCategory');
+    const setupLocation = document.getElementById('setupLocation');
+    const setupSnapshot = document.getElementById('setupSnapshot');
+    const setupNote = document.getElementById('setupNote');
+
+    function openSetup(){
+      setupOverlay.classList.add('open');
+      setupOverlay.setAttribute('aria-hidden','false');
+      document.body.style.overflow = 'hidden';
+      setupNote.value = '';
+      setupScope.value = 'all';
+      setupCatWrap.style.display = 'none';
+      setTimeout(() => setupScope.focus(), 30);
+    }
+    function closeSetup(){
+      setupOverlay.classList.remove('open');
+      setupOverlay.setAttribute('aria-hidden','true');
+      document.body.style.overflow = '';
+    }
+    [btnSetupClose, btnSetupCancel].forEach(btn => btn.addEventListener('click', closeSetup));
+    setupOverlay.addEventListener('click', (e) => { if (e.target === setupOverlay) closeSetup(); });
+    setupScope.addEventListener('change', () => {
+      setupCatWrap.style.display = (setupScope.value === 'category') ? '' : 'none';
+    });
+
+    function nowStamp(){
+      const d = new Date();
+      const mm = String(d.getMonth()+1).padStart(2,'0');
+      const dd = String(d.getDate()).padStart(2,'0');
+      const hh = String(d.getHours()).padStart(2,'0');
+      const mi = String(d.getMinutes()).padStart(2,'0');
+      return d.getFullYear() + '-' + mm + '-' + dd + ' ' + hh + ':' + mi;
+    }
+    // keep snapshot input fresh
+    setupSnapshot.value = nowStamp();
+
+    btnStartSession.addEventListener('click', () => { setupSnapshot.value = nowStamp(); openSetup(); });
+    btnStartSession2.addEventListener('click', () => { setupSnapshot.value = nowStamp(); openSetup(); });
+
+    btnSetupCreate.addEventListener('click', () => {
+      session = {
+        scope: setupScope.value,
+        category: setupScope.value === 'category' ? setupCategory.value : null,
+        location: setupLocation.value,
+        snapshot: setupSnapshot.value,
+        note: setupNote.value.trim()
+      };
+      updateSessionPill();
+
+      // Apply scope filter to count table
+      const rows = Array.from(document.querySelectorAll('#countBody tr'));
+      rows.forEach(tr => {
+        if (session.scope === 'category'){
+          tr.style.display = (tr.getAttribute('data-category') === session.category) ? '' : 'none';
+        } else {
+          tr.style.display = '';
+        }
+      });
+
+      snapshotTime.textContent = session.snapshot;
+      scopeLabel.textContent = session.scope === 'all' ? 'Full store' : ('Category: ' + session.category);
+
+      // reset count entries
+      rows.forEach(tr => {
+        tr.dataset.countedQty = '';
+        tr.dataset.countedExpiry = '';
+        tr.dataset.batches = '[]';
+        tr.querySelector('.cntQty').value = '';
+        // reset status tag
+        const tag = tr.querySelector('.tag');
+        tag.className = 'tag not';
+        tag.innerHTML = '<span class="dot"></span> Not counted';
+      });
+
+      closeSetup();
+      setStep(2);
+      showView('count');
+      showToast('Session created');
+      updateCounts();
+    });
+
+    // Count filters / search
+    const chips = document.getElementById('chips');
+    const searchCount = document.getElementById('searchCount');
+    const cNot = document.getElementById('cNot');
+    const cCounted = document.getElementById('cCounted');
+    const cAll = document.getElementById('cAll');
+    let countFilter = 'not';
+
+    function visibleRows(){
+      return Array.from(document.querySelectorAll('#countBody tr')).filter(tr => tr.style.display !== 'none');
+    }
+
+    function updateCounts(){
+      const rows = visibleRows();
+      const counted = rows.filter(r => (r.dataset.counted === 'true')).length;
+      const all = rows.length;
+      const not = all - counted;
+      cNot.textContent = String(not);
+      cCounted.textContent = String(counted);
+      cAll.textContent = String(all);
+    }
+
+    function applyCountFilter(){
+      const q = (searchCount.value || '').trim().toLowerCase();
+      Array.from(document.querySelectorAll('#countBody tr')).forEach(tr => {
+        // scope visibility already set by session; keep
+        if (session && session.scope === 'category' && tr.getAttribute('data-category') !== session.category){
+          tr.style.display = 'none';
+          return;
+        }
+        const name = (tr.getAttribute('data-name') || '').toLowerCase();
+        const matchesQ = !q || name.includes(q);
+
+        const isCounted = tr.dataset.counted === 'true';
+        const matchesStatus =
+          countFilter === 'all' ? true :
+          countFilter === 'counted' ? isCounted :
+          !isCounted;
+
+        tr.style.display = (matchesQ && matchesStatus) ? '' : 'none';
+      });
+      updateCounts();
+    }
+
+    chips.addEventListener('click', (e) => {
+      const btn = e.target.closest('.chip');
+      if (!btn) return;
+      Array.from(chips.querySelectorAll('.chip')).forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      countFilter = btn.dataset.filter;
+      applyCountFilter();
+    });
+    searchCount.addEventListener('input', applyCountFilter);
+
+    // Batch modal
+    const batchOverlay = document.getElementById('batchOverlay');
+    const btnBatchClose = document.getElementById('btnBatchClose');
+    const btnBatchCancel = document.getElementById('btnBatchCancel');
+    const btnBatchSave = document.getElementById('btnBatchSave');
+    const btnAddBatch = document.getElementById('btnAddBatch');
+    const batchBox = document.getElementById('batchBox');
+    const batchSub = document.getElementById('batchSub');
+    let activeRow = null;
+
+    function openBatch(row){
+      activeRow = row;
+      batchSub.textContent = 'Ingredient: ' + row.getAttribute('data-name') + ' · Add one or more batches (qty + expiry).';
+      batchBox.innerHTML = '';
+      const batches = JSON.parse(row.dataset.batches || '[]');
+      if (batches.length === 0) batches.push({qty:'', exp:''});
+      batches.forEach(b => addBatchRow(b.qty, b.exp));
+      batchOverlay.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeBatch(){
+      batchOverlay.classList.remove('open');
+      document.body.style.overflow = '';
+      activeRow = null;
+    }
+    [btnBatchClose, btnBatchCancel].forEach(btn => btn.addEventListener('click', closeBatch));
+    batchOverlay.addEventListener('click', (e) => { if (e.target === batchOverlay) closeBatch(); });
+
+    function addBatchRow(qty='', exp=''){
+      const div = document.createElement('div');
+      div.className = 'batch-row';
+      div.innerHTML = `
+        <input class="qty" type="number" min="0" step="1" placeholder="Qty" value="${qty}">
+        <span class="cell-muted" style="font-weight:900;">g</span>
+        <input class="date" type="date" value="${exp}">
+        <button class="btn-secondary" style="height:34px;border-radius:12px;padding:0 10px;">Remove</button>
+      `;
+      const rm = div.querySelector('button');
+      rm.addEventListener('click', () => div.remove());
+      batchBox.appendChild(div);
+    }
+    btnAddBatch.addEventListener('click', () => addBatchRow());
+
+    // Open batch buttons in table
+    document.querySelectorAll('.btnBatch').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const row = e.target.closest('tr');
+        openBatch(row);
+      });
+    });
+
+    btnBatchSave.addEventListener('click', () => {
+      if (!activeRow) return;
+      const rows = Array.from(batchBox.querySelectorAll('.batch-row'));
+      const batches = rows.map(r => ({
+        qty: (r.querySelector('.qty').value || '').trim(),
+        exp: (r.querySelector('.date').value || '').trim()
+      })).filter(b => b.qty || b.exp);
+
+      activeRow.dataset.batches = JSON.stringify(batches);
+
+      // If batches exist, set nearest expiry to the earliest date, and sum qty if all provided
+      let nearest = '';
+      batches.forEach(b => {
+        if (b.exp && (!nearest || b.exp < nearest)) nearest = b.exp;
+      });
+      if (nearest) activeRow.dataset.countedExpiry = nearest;
+
+      // If user hasn't typed total qty, and batches have qty values, auto-sum
+      const totalInput = activeRow.querySelector('.cntQty');
+      if (totalInput && !totalInput.value){
+        const nums = batches.map(b => parseInt(b.qty || '0', 10)).filter(n => !isNaN(n));
+        if (nums.length > 0){
+          const sum = nums.reduce((a,c)=>a+c,0);
+          totalInput.value = String(sum);
+        }
+      }
+
+      showToast('Batches saved');
+      closeBatch();
+    });
+
+    // Save line (mark counted)
+    document.querySelectorAll('.btnSave').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const row = e.target.closest('tr');
+        const qty = (row.querySelector('.cntQty').value || '').trim();
+        if (!qty){
+          showToast('Enter counted qty first');
+          row.querySelector('.cntQty').focus();
+          return;
+        }
+        row.dataset.counted = 'true';
+        row.dataset.countedQty = qty;
+
+        // if batches set nearest expiry, keep; else use expected? leave blank
+        const batches = JSON.parse(row.dataset.batches || '[]');
+        if (batches.length > 0){
+          // already computed in batch save; ensure
+          let nearest = '';
+          batches.forEach(b => { if (b.exp && (!nearest || b.exp < nearest)) nearest = b.exp; });
+          row.dataset.countedExpiry = nearest || '';
+        } else {
+          row.dataset.countedExpiry = row.dataset.countedExpiry || '';
+        }
+
+        const tag = row.querySelector('.tag');
+        tag.className = 'tag counted';
+        tag.innerHTML = '<span class="dot"></span> Counted';
+
+        showToast('Saved');
+        updateCounts();
+        applyCountFilter();
+      });
+    });
+
+    // Count cell "tap to view expected" (quick modal via toast)
+    document.querySelectorAll('#countBody .name, #countBody td:first-child').forEach(cell => {
+      cell.addEventListener('click', (e) => {
+        const row = e.target.closest('tr');
+        const expQ = row.getAttribute('data-expected-qty') || '0';
+        const expE = row.getAttribute('data-expected-exp') || '—';
+        showToast('Expected: ' + expQ + ' g · ' + (expE || '—'));
+      });
+    });
+
+    // Review building
+    const btnGoReview = document.getElementById('btnGoReview');
+    const btnBackCount = document.getElementById('btnBackCount');
+    const btnRunReview = document.getElementById('btnRunReview');
+    const btnPost = document.getElementById('btnPost');
+    const reviewBody = document.getElementById('reviewBody');
+    const reviewBanner = document.getElementById('reviewBanner');
+    const reviewTitle = document.getElementById('reviewTitle');
+    const reviewSub = document.getElementById('reviewSub');
+    const impactPill = document.getElementById('impactPill');
+
+    const rVar = document.getElementById('rVar');
+    const rReview = document.getElementById('rReview');
+    const rAll = document.getElementById('rAll');
+
+    let reviewData = [];
+    let reviewFilter = 'variance';
+
+    function daysBetween(a, b){
+      if (!a || !b) return null;
+      const da = new Date(a + 'T00:00:00');
+      const db = new Date(b + 'T00:00:00');
+      return Math.round((db - da) / (1000*60*60*24));
+    }
+
+    function computeReview(){
+      const rows = Array.from(document.querySelectorAll('#countBody tr')).filter(tr => tr.dataset.counted === 'true' && tr.style.display !== 'none');
+      reviewData = rows.map(tr => {
+        const name = tr.getAttribute('data-name');
+        const expQty = parseInt(tr.getAttribute('data-expected-qty') || '0', 10) || 0;
+        const cntQty = parseInt(tr.dataset.countedQty || '0', 10) || 0;
+        const expExp = tr.getAttribute('data-expected-exp') || '';
+        const cntExp = tr.dataset.countedExpiry || '';
+
+        const diff = cntQty - expQty;
+        const pct = expQty > 0 ? Math.round(Math.abs(diff) / expQty * 100) : (cntQty > 0 ? 999 : 0);
+
+        let needs = false;
+        if (expQty === 0 && cntQty > 0) needs = true;
+        if (expQty > 0 && (Math.abs(diff) / expQty) > 0.15) needs = true;
+
+        // expiry earlier by >=7 days
+        let expiryFlag = false;
+        if (expExp && cntExp){
+          const d = daysBetween(cntExp, expExp); // exp - cnt
+          if (d !== null && d >= 7) expiryFlag = true;
+        }
+        if (expiryFlag) needs = true;
+
+        const varianceText = (expQty === 0 && cntQty > 0) ? '+∞ (from 0)' : ((diff>=0?'+':'') + diff + ' (' + pct + '%)');
+
+        return {
+          name, expQty, cntQty, diff, pct, expExp: expExp || '—', cntExp: cntExp || '—',
+          varianceText,
+          needsRecount: needs,
+          expiryFlag
+        };
+      });
+
+      // Counters
+      const varianceOnly = reviewData.filter(d => d.diff !== 0 || (d.expExp !== d.cntExp && d.cntExp !== '—')).length;
+      const needs = reviewData.filter(d => d.needsRecount).length;
+
+      rVar.textContent = String(varianceOnly);
+      rReview.textContent = String(needs);
+      rAll.textContent = String(reviewData.length);
+
+      // Estimated impact: fake using unit cost per g (IDR 2) for demo
+      const impact = reviewData.reduce((acc, d) => acc + Math.abs(d.diff) * 2, 0);
+      impactPill.textContent = 'Estimated impact: IDR ' + impact.toLocaleString();
+
+      // Banner
+      reviewBanner.className = needs > 0 ? 'banner warn' : 'banner ok';
+      reviewTitle.textContent = needs > 0 ? 'Recount recommended' : 'Looks good';
+      reviewSub.textContent = needs > 0
+        ? (needs + ' item(s) require recount due to large variance or early expiry.')
+        : 'No items exceed variance thresholds.';
+    }
+
+    function renderReview(){
+      reviewBody.innerHTML = '';
+      let items = reviewData.slice();
+
+      if (reviewFilter === 'variance'){
+        items = items.filter(d => d.diff !== 0 || d.expExp !== d.cntExp);
+      } else if (reviewFilter === 'review'){
+        items = items.filter(d => d.needsRecount);
+      } // 'all' uses all
+
+      items.forEach(d => {
+        const status = d.needsRecount ? 'review' : 'counted';
+        const statusText = d.needsRecount ? 'Needs recount' : 'OK';
+        const actionText = d.needsRecount ? 'Mark recounted' : '—';
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td style="font-weight:950;">${d.name}</td>
+          <td class="mono">${d.expQty} <span class="cell-muted">g</span></td>
+          <td class="mono">${d.cntQty} <span class="cell-muted">g</span></td>
+          <td class="mono">${d.varianceText}${d.expiryFlag ? ' · shelf earlier' : ''}</td>
+          <td class="mono cell-muted">${d.expExp}</td>
+          <td class="mono cell-muted">${d.cntExp}</td>
+          <td><span class="tag ${d.needsRecount ? 'review' : 'counted'}"><span class="dot"></span> ${statusText}</span></td>
+          <td style="text-align:right;">
+            ${d.needsRecount ? '<button class="link-btn btnRecount">Mark recounted</button>' : '<span class="cell-muted">—</span>'}
+          </td>
+        `;
+        if (d.needsRecount){
+          tr.querySelector('.btnRecount').addEventListener('click', () => {
+            // For prototype: just flip status to OK
+            d.needsRecount = false;
+            showToast('Marked recounted');
+            computeReview();
+            renderReview();
+          });
+        }
+        reviewBody.appendChild(tr);
+      });
+    }
+
+    // Review chips
+    document.querySelectorAll('[data-rfilter]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('[data-rfilter]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        reviewFilter = btn.dataset.rfilter;
+        renderReview();
+      });
+    });
+
+    btnRunReview.addEventListener('click', () => {
+      computeReview();
+      renderReview();
+      showToast('Review updated');
+    });
+
+    btnGoReview.addEventListener('click', () => {
+      if (!session){
+        showToast('Create a session first');
+        return;
+      }
+      setStep(3);
+      showView('review');
+      // auto compute
+      computeReview();
+      renderReview();
+    });
+
+    btnBackCount.addEventListener('click', () => {
+      setStep(2);
+      showView('count');
+    });
+
+    btnPost.addEventListener('click', () => {
+      showToast('Posted (prototype)');
+      // End session for prototype
+      session = null;
+      updateSessionPill();
+      setStep(1);
+      showView('empty');
+    });
+
+    // Escape closes modals
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape') return;
+      if (setupOverlay.classList.contains('open')) closeSetup();
+      if (batchOverlay.classList.contains('open')) closeBatch();
+    });
+
+    // Initial state
+    setStep(1);
+    showView('empty');
+    updateSessionPill();
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,1814 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Ingredients - Komodo Resort New</title>
+  <style>
+
+    :root{
+      --blue:#1f57ff;
+      --blue-2:#1a49d6;
+      --bg:#f6f7fb;
+      --card:#ffffff;
+      --text:#111827;
+      --muted:#6b7280;
+      --line:#e5e7eb;
+
+      --shadow: 0 10px 25px rgba(17,24,39,.08);
+      --shadow-soft: 0 6px 18px rgba(17,24,39,.10);
+
+      --radius:14px;
+      --radius-sm:10px;
+
+      --sidebar-w: 270px;
+      --topbar-h: 64px;
+
+      --nav-hover:#f3f4f6;
+      --nav-open-bg:#eef3ff;
+      --nav-active-bg:#e7efff;
+
+      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:var(--font);
+      color:var(--text);
+      background:var(--bg);
+      overflow-x:hidden;
+    }
+
+    /* Top bar */
+    .topbar{
+      position:sticky;
+      top:0;
+      z-index:80;
+      height:var(--topbar-h);
+      background:var(--blue);
+      color:#fff;
+      display:flex;
+      align-items:center;
+      padding:0 18px;
+      gap:14px;
+      box-shadow: 0 2px 0 rgba(255,255,255,.05);
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      min-width:260px;
+    }
+    .brand .app-icon{
+      width:28px;height:28px;border-radius:7px;
+      background:rgba(255,255,255,.18);
+      display:grid;place-items:center;
+    }
+    .brand .title{
+      font-weight:650;
+      letter-spacing:.2px;
+      display:flex;
+      align-items:center;
+      gap:6px;
+      white-space:nowrap;
+    }
+    .brand .caret{
+      width:10px;height:10px;opacity:.85;
+      transform:translateY(1px);
+    }
+
+    .global-search{
+      flex:1;
+      display:flex;
+      justify-content:center;
+    }
+    .global-search .searchbox{
+      width:min(860px, 100%);
+      background:#fff;
+      color:var(--text);
+      border-radius:999px;
+      height:40px;
+      display:flex;
+      align-items:center;
+      padding:0 14px 0 16px;
+      gap:10px;
+      box-shadow: 0 6px 16px rgba(0,0,0,.12);
+    }
+    .global-search input{
+      border:0;outline:0;
+      width:100%;
+      font-size:14px;
+    }
+    .global-search .magnify{
+      width:18px;height:18px;opacity:.55;
+    }
+
+    .top-actions{
+      display:flex;
+      align-items:center;
+      gap:14px;
+    }
+    .icon-btn{
+      width:34px;height:34px;
+      border-radius:10px;
+      display:grid;place-items:center;
+      background:rgba(255,255,255,.12);
+      border:1px solid rgba(255,255,255,.12);
+      cursor:pointer;
+    }
+    .icon-btn:hover{background:rgba(255,255,255,.18)}
+    .icon-btn svg{width:18px;height:18px;fill:none;stroke:#fff;stroke-width:2}
+    .avatar{
+      width:34px;height:34px;border-radius:999px;
+      background:rgba(255,255,255,.18);
+      display:grid;place-items:center;
+      font-weight:700;
+      border:1px solid rgba(255,255,255,.18);
+    }
+
+    /* Fixed sidebar (full menu) */
+    .sidebar{
+      position:fixed;
+      top:var(--topbar-h);
+      left:0;
+      bottom:0;
+      width:var(--sidebar-w);
+      background:#fff;
+      border-right:1px solid var(--line);
+      overflow:auto;
+      padding:14px 10px 18px;
+      z-index:70;
+    }
+
+    .menu-group{margin-top:6px}
+    .menu-item{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      padding:12px 12px;
+      border-radius:14px;
+      color:#111827;
+      cursor:pointer;
+      user-select:none;
+    }
+    .menu-item:hover{background:var(--nav-hover)}
+    .menu-item .ico{
+      width:28px;height:28px;border-radius:10px;
+      display:grid;place-items:center;
+      background:#f3f4f6;
+      border:1px solid #eef2f7;
+      flex:0 0 auto;
+    }
+    .menu-item .ico svg{width:18px;height:18px;fill:none;stroke:#4b5563;stroke-width:2}
+    .menu-item .label{
+      flex:1;
+      font-weight:650;
+    }
+    .menu-item .chev{
+      width:18px;height:18px;
+      fill:none;stroke:#9ca3af;stroke-width:2;
+      transition:transform .15s ease;
+    }
+
+    .menu-item.open{ background:var(--nav-open-bg); }
+    .menu-item.open .chev{ transform:rotate(180deg); stroke:#6b7280; }
+
+    .submenu{
+      margin:6px 0 10px 52px;
+      display:none;
+    }
+    .submenu.open{display:block;}
+    .submenu a{
+      display:block;
+      text-decoration:none;
+      color:#374151;
+      padding:10px 12px;
+      border-radius:12px;
+      font-weight:600;
+    }
+    .submenu a:hover{background:var(--nav-hover)}
+    .submenu a.active{
+      background:var(--nav-active-bg);
+      color:var(--blue);
+    }
+
+    .sidebar-divider{height:1px;background:var(--line);margin:12px 8px}
+
+    /* Main content area */
+    .content{
+      margin-left:var(--sidebar-w);
+      padding:18px 20px 70px;
+      max-width: 1400px;
+    }
+
+    .breadcrumb{
+      color:var(--muted);
+      font-size:13px;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      margin:4px 0 10px;
+    }
+    .crumb-dot{opacity:.5}
+
+    .page-head{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:16px;
+      margin-bottom:14px;
+    }
+    .page-title{
+      font-size:30px;
+      font-weight:750;
+      margin:0;
+      letter-spacing:-.2px;
+    }
+    .page-desc{
+      margin:4px 0 0;
+      color:var(--muted);
+      max-width:860px;
+      line-height:1.45;
+      font-size:14px;
+    }
+
+    .primary-btn{
+      height:40px;
+      padding:0 16px;
+      border-radius:12px;
+      border:0;
+      background:var(--blue);
+      color:#fff;
+      font-weight:650;
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      cursor:pointer;
+      box-shadow: 0 10px 20px rgba(31,87,255,.22);
+      white-space:nowrap;
+    }
+    .primary-btn:hover{background:var(--blue-2)}
+    .primary-btn svg{width:16px;height:16px;fill:none;stroke:#fff;stroke-width:2}
+
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow: 0 1px 0 rgba(17,24,39,.02);
+    }
+
+    .filters{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin:16px 0 12px;
+    }
+    .search-inline{
+      width:320px;
+      max-width:100%;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:10px 12px;
+    }
+    .search-inline input{
+      border:0;outline:0;width:100%;
+      font-size:14px;
+    }
+    .search-inline svg{
+      width:18px;height:18px;
+      stroke:#9ca3af;stroke-width:2;fill:none;
+    }
+
+    /* Table */
+    .table-wrap{
+      overflow:auto;
+      border-radius:var(--radius);
+    }
+    table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
+      min-width: 980px;
+      background:#fff;
+    }
+    thead th{
+      text-align:left;
+      font-size:12px;
+      color:#6b7280;
+      font-weight:700;
+      padding:14px 16px;
+      border-bottom:1px solid var(--line);
+      background:#fbfbfd;
+      position:sticky;
+      top:0;
+      z-index:1;
+      white-space:nowrap;
+    }
+    tbody td{
+      padding:14px 16px;
+      border-bottom:1px solid var(--line);
+      font-size:14px;
+      color:#111827;
+      white-space:nowrap;
+    }
+    tbody tr:hover{background:#fafafa}
+    .name{font-weight:650;}
+    .muted{color:var(--muted)}
+
+    .actions{
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .mini-ico{
+      width:34px;height:34px;
+      border-radius:10px;
+      border:1px solid var(--line);
+      background:#fff;
+      display:grid;place-items:center;
+      cursor:pointer;
+    }
+    .mini-ico:hover{background:#f3f4f6}
+    .mini-ico svg{
+      width:16px;height:16px;
+      fill:none;stroke:#374151;stroke-width:2;
+    }
+
+    /* Clickable row hint (only 1 row will use this) */
+    .clickable-row td{ cursor:pointer; }
+    .clickable-row .name{ color:#0f2ea6; }
+    .clickable-row:hover{ background:#f6f8ff; }
+
+    /* Help widget */
+    .help-widget{
+      position:fixed;
+      right:22px;
+      bottom:20px;
+      z-index:90;
+      display:flex;
+      flex-direction:column;
+      align-items:flex-end;
+      gap:10px;
+    }
+    .help-menu{
+      width:240px;
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:16px;
+      box-shadow:var(--shadow-soft);
+      overflow:hidden;
+      display:none;
+      position:relative;
+    }
+    .help-menu.open{display:block}
+    .help-menu .close-x{
+      position:absolute;
+      top:8px;
+      right:8px;
+      width:28px;height:28px;
+      border-radius:10px;
+      border:1px solid var(--line);
+      background:#fff;
+      cursor:pointer;
+      display:grid;place-items:center;
+    }
+    .help-menu .close-x:hover{background:#f3f4f6}
+    .help-menu .close-x svg{width:14px;height:14px;stroke:#6b7280;stroke-width:2;fill:none}
+
+    .help-item{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:12px 14px;
+      cursor:pointer;
+      font-weight:650;
+      color:#1f2937;
+      border-bottom:1px solid var(--line);
+    }
+    .help-item:last-child{border-bottom:0}
+    .help-item:hover{background:#f8fafc}
+    .help-item svg{width:18px;height:18px;fill:none;stroke:var(--blue);stroke-width:2}
+
+    .help-btn{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 14px;
+      border-radius:999px;
+      border:0;
+      background:var(--blue);
+      color:#fff;
+      font-weight:750;
+      cursor:pointer;
+      box-shadow: 0 12px 24px rgba(31,87,255,.28);
+    }
+    .help-btn:hover{background:var(--blue-2)}
+    .help-btn svg{width:18px;height:18px;fill:none;stroke:#fff;stroke-width:2}
+
+    @media (max-width: 980px){
+      .brand{min-width:auto}
+      .global-search{display:none}
+      .content{padding:16px 14px 80px}
+      .page-head{flex-direction:column;align-items:flex-start}
+      .filters{flex-direction:column;align-items:flex-start}
+      .search-inline{width:100%}
+      table{min-width:860px}
+      :root{ --sidebar-w: 250px; }
+      .drawer{ width: 92vw; }
+    }
+  
+    /* Views */
+    .view{ display:none; }
+    .view.active{ display:block; }
+
+    .detail-head{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:16px;
+      margin:8px 0 14px;
+    }
+    .back-btn{
+      height:36px;
+      padding:0 12px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:#fff;
+      cursor:pointer;
+      font-weight:800;
+      color:#374151;
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+    }
+    .back-btn:hover{background:#f3f4f6}
+    .back-btn svg{width:16px;height:16px;fill:none;stroke:#374151;stroke-width:2}
+
+    .page-actions{
+      display:flex;
+      gap:10px;
+      align-items:center;
+    }
+    .secondary-pill{
+      height:40px;
+      padding:0 14px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:#fff;
+      font-weight:900;
+      color:#374151;
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      cursor:default;
+    }
+    .secondary-pill svg{width:18px;height:18px;fill:none;stroke:#6b7280;stroke-width:2}
+
+    /* Detail cards */
+    .detail-grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+      margin-top:14px;
+    }
+    .detail-card{
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      background:#fff;
+      padding:14px 14px;
+    }
+    .detail-card .k{
+      font-size:12px;
+      color:#6b7280;
+      font-weight:900;
+      margin-bottom:10px;
+    }
+    .detail-card .v{
+      font-size:16px;
+      font-weight:900;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .detail-card .sub{
+      margin-top:8px;
+      font-size:12px;
+      color:var(--muted);
+      font-weight:750;
+      line-height:1.35;
+    }
+    .detail-card.wide{ grid-column: 1 / -1; }
+
+    @media (max-width: 980px){
+      .detail-grid{ grid-template-columns: 1fr; }
+      .detail-card.wide{ grid-column: auto; }
+    }
+
+  
+    /* Modal */
+    .modal-overlay{
+      position:fixed;
+      inset:0;
+      background:rgba(17,24,39,.35);
+      z-index:120;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+    }
+    .modal-overlay.open{ display:flex; }
+
+    .modal{
+      width: 520px;
+      max-width: 100%;
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:18px;
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .modal-head{
+      padding:16px 16px 12px;
+      border-bottom:1px solid var(--line);
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .modal-title{
+      margin:0;
+      font-size:18px;
+      font-weight:900;
+      letter-spacing:-.2px;
+    }
+    .modal-sub{
+      margin:6px 0 0;
+      color:var(--muted);
+      font-size:13px;
+      font-weight:700;
+      line-height:1.35;
+    }
+    .modal-body{
+      padding:14px 16px 16px;
+    }
+    .form-grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+    }
+    .form-field{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px 12px;
+      background:#fff;
+    }
+    .form-field .k{
+      font-size:12px;
+      color:#6b7280;
+      font-weight:900;
+      margin-bottom:8px;
+    }
+    .form-field .v{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      justify-content:space-between;
+    }
+    .form-field input, .form-field select{
+      width:100%;
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:10px 10px;
+      font-weight:800;
+      outline:none;
+      font-size:14px;
+      background:#fff;
+    }
+    .form-field input:focus, .form-field select:focus{
+      border-color: rgba(31,87,255,.5);
+      box-shadow: 0 0 0 4px rgba(31,87,255,.10);
+    }
+    .form-field.wide{ grid-column: 1 / -1; }
+    .hint{
+      font-size:12px;
+      color:var(--muted);
+      font-weight:700;
+      margin-top:8px;
+      line-height:1.35;
+    }
+    .modal-foot{
+      padding:12px 16px 16px;
+      border-top:1px solid var(--line);
+      display:flex;
+      justify-content:flex-end;
+      gap:10px;
+    }
+    .btn-secondary{
+      height:40px;
+      padding:0 14px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:#fff;
+      cursor:pointer;
+      font-weight:900;
+      color:#374151;
+    }
+    .btn-secondary:hover{background:#f3f4f6}
+
+    /* Toast */
+    .toast{
+      position:fixed;
+      left:50%;
+      bottom:24px;
+      transform:translateX(-50%) translateY(20px);
+      background:#111827;
+      color:#fff;
+      padding:10px 14px;
+      border-radius:999px;
+      font-weight:800;
+      font-size:13px;
+      box-shadow: 0 14px 30px rgba(0,0,0,.25);
+      opacity:0;
+      pointer-events:none;
+      transition:opacity .18s ease, transform .18s ease;
+      z-index:140;
+      max-width: 90vw;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .toast.show{
+      opacity:1;
+      transform:translateX(-50%) translateY(0);
+    }
+
+    @media (max-width: 980px){
+      .form-grid{ grid-template-columns: 1fr; }
+      .form-field.wide{ grid-column:auto; }
+    }
+
+  </style>
+</head>
+<body>
+<!-- Topbar -->
+  <header class="topbar">
+    <div class="brand">
+      <div class="app-icon" title="App">
+        <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="3" y="3" width="8" height="8" rx="2" fill="white" opacity=".95"></rect>
+          <rect x="13" y="3" width="8" height="8" rx="2" fill="white" opacity=".95"></rect>
+          <rect x="3" y="13" width="8" height="8" rx="2" fill="white" opacity=".95"></rect>
+          <rect x="13" y="13" width="8" height="8" rx="2" fill="white" opacity=".95"></rect>
+        </svg>
+      </div>
+      <div class="title">
+        Komodo Resort New
+        <svg class="caret" viewBox="0 0 20 20" aria-hidden="true">
+          <path d="M5 7l5 6 5-6" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+      </div>
+    </div>
+
+    <div class="global-search">
+      <div class="searchbox">
+        <svg class="magnify" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="7" fill="none" stroke="#111827" stroke-width="2"></circle>
+          <path d="M20 20l-3.5-3.5" fill="none" stroke="#111827" stroke-width="2" stroke-linecap="round"></path>
+        </svg>
+        <input type="text" placeholder="Search" />
+      </div>
+    </div>
+
+    <div class="top-actions">
+      <div class="icon-btn" title="Calendar">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M7 3v3M17 3v3" />
+          <path d="M4 7h16" />
+          <rect x="4" y="5" width="16" height="16" rx="3" />
+        </svg>
+      </div>
+      <div class="icon-btn" title="Settings">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"></path>
+          <path d="M19.4 15a7.8 7.8 0 0 0 .1-2l2-1.3-2-3.4-2.3.8a7.6 7.6 0 0 0-1.7-1l-.3-2.4H9l-.3 2.4a7.6 7.6 0 0 0-1.7 1l-2.3-.8-2 3.4 2 1.3a7.8 7.8 0 0 0 .1 2l-2 1.3 2 3.4 2.3-.8a7.6 7.6 0 0 0 1.7 1l.3 2.4h6l.3-2.4a7.6 7.6 0 0 0 1.7-1l2.3.8 2-3.4-2-1.3Z"></path>
+        </svg>
+      </div>
+      <div class="icon-btn" title="Help">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 18h.01"></path>
+          <path d="M9.1 9a3 3 0 1 1 5.8 1c0 2-3 2-3 4"></path>
+          <circle cx="12" cy="12" r="9"></circle>
+        </svg>
+      </div>
+      <div class="avatar" title="User">HY</div>
+    </div>
+  </header>
+
+<!-- Fixed Sidebar -->
+  <aside class="sidebar">
+    <div class="menu-group">
+      <div class="menu-item" data-link="#">
+        <div class="ico">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round"></path>
+          </svg>
+        </div>
+        <div class="label">Menu</div>
+      </div>
+
+      <div class="menu-item" data-link="#">
+        <div class="ico">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 11l8-7 8 7v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"></path>
+            <path d="M9 22V12h6v10"></path>
+          </svg>
+        </div>
+        <div class="label">Dashboard</div>
+      </div>
+
+      <!-- Products (expandable) -->
+      <div class="menu-item" data-toggle="products">
+        <div class="ico">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M7 7h10v10H7z"></path>
+            <path d="M9 11h6M9 14h4" stroke-linecap="round"></path>
+          </svg>
+        </div>
+        <div class="label">Products</div>
+        <svg class="chev" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+      </div>
+      <div class="submenu" data-submenu="products">
+        <a href="#" onclick="return false;">Products</a>
+        <a href="#" onclick="return false;">Categories</a>
+        <a href="#" onclick="return false;">Combinations</a>
+        <a href="ingredients_v14_with_procurement.html">Ingredients</a>
+        <a href="#" onclick="return false;">Unit Types</a>
+      </div>
+
+      <!-- Stock Management (expandable) -->
+      <div class="menu-item open" data-toggle="stock">
+        <div class="ico">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round"></path>
+            <path d="M7 7v10M12 7v10M17 7v10"></path>
+          </svg>
+        </div>
+        <div class="label">Stock management</div>
+        <svg class="chev" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+      </div>
+      <div class="submenu open" data-submenu="stock">
+        <a class="submenu-link active" href="ingredients_v14_with_procurement.html"><span>Ingredients</span></a>
+        <a class="submenu-link" href="stock_count_v4_with_procurement.html"><span>Stock count</span></a>
+        <a class="submenu-link" href="#" onclick="return false;"><span>Recipes</span></a>
+        <a class="submenu-link" href="#" onclick="return false;"><span>Purchase Orders</span></a>
+        <a class="submenu-link" href="#" onclick="return false;"><span>Receiving</span></a>
+        <a class="submenu-link" href="#" onclick="return false;"><span>Vendor Credits</span></a>
+      </div>
+      <div class="menu-item" data-toggle="procurement">
+        <div class="menu-icon">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6 7h15l-2 10H8L6 7z" stroke-linejoin="round"></path>
+            <path d="M6 7l-2-3H2" stroke-linecap="round"></path>
+            <path d="M9 20a1 1 0 100-2 1 1 0 000 2zM18 20a1 1 0 100-2 1 1 0 000 2z"></path>
+          </svg>
+        </div>
+        <span class="menu-label">Procurement</span>
+        <div class="chev">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18l6-6-6-6" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+        </div>
+      </div>
+      
+      <div class="submenu" data-submenu="procurement">
+        <a class="submenu-link" href="procurement_overview_v2.html"><span>Overview</span></a>
+        <a class="submenu-link" href="procurement_pr_v1.html"><span>Purchase requisitions</span></a>
+        <a class="submenu-link" href="procurement_po_v1.html"><span>Purchase orders</span></a>
+        <a class="submenu-link" href="procurement_receiving_v1.html"><span>Receiving</span></a>
+        <a class="submenu-link" href="#"><span>Suppliers</span></a>
+      </div>
+
+
+
+      <div class="sidebar-divider"></div>
+
+      <div class="menu-item" data-link="#">
+        <div class="ico">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M3 9h18"></path>
+            <path d="M7 12h10"></path>
+            <path d="M5 15h14"></path>
+          </svg>
+        </div>
+        <div class="label">Floors</div>
+        <svg class="chev" viewBox="0 0 24 24" aria-hidden="true" style="opacity:.65">
+          <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+      </div>
+
+      <div class="menu-item" data-link="#">
+        <div class="ico">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="6" y="3" width="12" height="14" rx="2"></rect>
+            <path d="M8 7h8M8 10h8M8 13h6" stroke-linecap="round"></path>
+            <path d="M8 21h8" stroke-linecap="round"></path>
+          </svg>
+        </div>
+        <div class="label">Printing</div>
+        <svg class="chev" viewBox="0 0 24 24" aria-hidden="true" style="opacity:.65">
+          <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+      </div>
+
+      <div class="menu-item" data-link="#">
+        <div class="ico">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="4" y="3" width="16" height="18" rx="3"></rect>
+            <path d="M8 8h8M8 12h8M8 16h6" stroke-linecap="round"></path>
+          </svg>
+        </div>
+        <div class="label">Payments</div>
+        <svg class="chev" viewBox="0 0 24 24" aria-hidden="true" style="opacity:.65">
+          <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+      </div>
+
+      <div class="menu-item" data-toggle="settings">
+        <div class="ico">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"></path>
+            <path d="M19.4 15a7.8 7.8 0 0 0 .1-2l2-1.3-2-3.4-2.3.8a7.6 7.6 0 0 0-1.7-1l-.3-2.4H9l-.3 2.4a7.6 7.6 0 0 0-1.7 1l-2.3-.8-2 3.4 2 1.3a7.8 7.8 0 0 0 .1 2l-2 1.3 2 3.4 2.3-.8a7.6 7.6 0 0 0 1.7 1l.3 2.4h6l.3-2.4a7.6 7.6 0 0 0 1.7-1l2.3.8 2-3.4-2-1.3Z"></path>
+          </svg>
+        </div>
+        <div class="label">Settings</div>
+        <svg class="chev" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+      </div>
+      <div class="submenu" data-submenu="settings">
+        <a href="#" onclick="return false;">General</a>
+        <a href="#" onclick="return false;">Users</a>
+        <a href="#" onclick="return false;">Integrations</a>
+      </div>
+    </div>
+  </aside>
+
+
+  <main class="content">
+    <section class="view active" id="viewList">
+
+    <div class="breadcrumb">
+      <span>Stock management</span>
+      <span class="crumb-dot">›</span>
+      <span>Ingredients</span>
+    </div>
+
+    <div class="page-head">
+      <div>
+        <h1 class="page-title">Ingredients</h1>
+        <p class="page-desc">
+          Keep track of all ingredients, control costs, manage portions, and prevent waste by recording all ingredients.
+          Manage ingredient stock through one list.
+        </p>
+      </div>
+      <button class="primary-btn" id="btnAdd">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 5v14M5 12h14" stroke-linecap="round"/>
+        </svg>
+        Add Ingredients
+      </button>
+    </div>
+
+    <div class="filters">
+      <div class="search-inline">
+        <input id="nameFilter" type="text" placeholder="Search by name" />
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="7"></circle>
+          <path d="M20 20l-3.5-3.5" stroke-linecap="round"></path>
+        </svg>
+      </div>
+    </div>
+
+    <div class="card table-wrap">
+      <table id="ingredientsTable">
+        <thead>
+          <tr>
+            <th style="min-width:220px;">Name</th>
+            <th>SKU</th>
+            <th>Unit Type</th>
+            <th>Cost Excl Tax</th>
+            <th>Unit price (per 100g)</th>
+            <th>Supplier</th>
+            <th>Current Stock</th>
+            <th>Active</th>
+            <th style="min-width:120px;">Actions</th>
+          </tr>
+        </thead>
+                <tbody>
+          <!-- Only this one row is clickable for the prototype -->
+          <tr class="clickable-row" id="rowAnise">
+            <td class="name">Anise Star</td>
+            <td class="muted">1001</td>
+            <td class="muted">Gram</td>
+            <td class="muted price-idr">IDR 230</td>
+            <td class="muted price-idr">IDR 23</td>
+            <td class="muted">—</td>
+            <td class="muted" id="stockAnise">790</td>
+            <td class="muted">Active</td>
+            <td>
+              <div class="actions">
+                <div class="mini-ico" title="Delete">
+                  <svg viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M9 7V5h6v2"/><path d="M7 7l1 14h8l1-14"/></svg>
+                </div>
+                <div class="mini-ico" title="Edit">
+                  <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4 11.5-11.5Z"/></svg>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td class="name">Avocado</td>
+            <td class="muted">2001</td>
+            <td class="muted">Gram</td>
+            <td class="muted price-idr">IDR 35</td>
+            <td class="muted price-idr">IDR 8</td>
+            <td class="muted">—</td>
+            <td class="muted">0</td>
+            <td class="muted">Active</td>
+            <td>
+              <div class="actions">
+                <div class="mini-ico" title="Delete">
+                  <svg viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M9 7V5h6v2"/><path d="M7 7l1 14h8l1-14"/></svg>
+                </div>
+                <div class="mini-ico" title="Edit">
+                  <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4 11.5-11.5Z"/></svg>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td class="name">Bacon</td>
+            <td class="muted">3001</td>
+            <td class="muted">Gram</td>
+            <td class="muted price-idr">IDR 190</td>
+            <td class="muted price-idr">IDR 19</td>
+            <td class="muted">—</td>
+            <td class="muted">0</td>
+            <td class="muted">Active</td>
+            <td>
+              <div class="actions">
+                <div class="mini-ico" title="Delete">
+                  <svg viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M9 7V5h6v2"/><path d="M7 7l1 14h8l1-14"/></svg>
+                </div>
+                <div class="mini-ico" title="Edit">
+                  <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4 11.5-11.5Z"/></svg>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td class="name">Balsamic Vinegar</td>
+            <td class="muted">1002</td>
+            <td class="muted">Gram</td>
+            <td class="muted price-idr">IDR 199</td>
+            <td class="muted price-idr">IDR 20</td>
+            <td class="muted">—</td>
+            <td class="muted">0</td>
+            <td class="muted">Active</td>
+            <td>
+              <div class="actions">
+                <div class="mini-ico" title="Delete">
+                  <svg viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M9 7V5h6v2"/><path d="M7 7l1 14h8l1-14"/></svg>
+                </div>
+                <div class="mini-ico" title="Edit">
+                  <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4 11.5-11.5Z"/></svg>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td class="name">Beans in Tomao Sauce</td>
+            <td class="muted">1003</td>
+            <td class="muted">Gram</td>
+            <td class="muted price-idr">IDR 59</td>
+            <td class="muted price-idr">IDR 6</td>
+            <td class="muted">—</td>
+            <td class="muted">0</td>
+            <td class="muted">Active</td>
+            <td>
+              <div class="actions">
+                <div class="mini-ico" title="Delete">
+                  <svg viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M9 7V5h6v2"/><path d="M7 7l1 14h8l1-14"/></svg>
+                </div>
+                <div class="mini-ico" title="Edit">
+                  <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4 11.5-11.5Z"/></svg>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td class="name">Bechamel</td>
+            <td class="muted">1004</td>
+            <td class="muted">Gram</td>
+            <td class="muted price-idr">IDR 136</td>
+            <td class="muted price-idr">IDR 14</td>
+            <td class="muted">—</td>
+            <td class="muted">0</td>
+            <td class="muted">Active</td>
+            <td>
+              <div class="actions">
+                <div class="mini-ico" title="Delete">
+                  <svg viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M9 7V5h6v2"/><path d="M7 7l1 14h8l1-14"/></svg>
+                </div>
+                <div class="mini-ico" title="Edit">
+                  <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4 11.5-11.5Z"/></svg>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td class="name">Beef</td>
+            <td class="muted">3002</td>
+            <td class="muted">Gram</td>
+            <td class="muted price-idr">IDR 580</td>
+            <td class="muted price-idr">IDR 58</td>
+            <td class="muted">—</td>
+            <td class="muted">0</td>
+            <td class="muted">Active</td>
+            <td>
+              <div class="actions">
+                <div class="mini-ico" title="Delete">
+                  <svg viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M9 7V5h6v2"/><path d="M7 7l1 14h8l1-14"/></svg>
+                </div>
+                <div class="mini-ico" title="Edit">
+                  <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4 11.5-11.5Z"/></svg>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td class="name">Beef Minced Meat</td>
+            <td class="muted">3003</td>
+            <td class="muted">Gram</td>
+            <td class="muted price-idr">IDR 190</td>
+            <td class="muted price-idr">IDR 19</td>
+            <td class="muted">—</td>
+            <td class="muted">0</td>
+            <td class="muted">Active</td>
+            <td>
+              <div class="actions">
+                <div class="mini-ico" title="Delete">
+                  <svg viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M9 7V5h6v2"/><path d="M7 7l1 14h8l1-14"/></svg>
+                </div>
+                <div class="mini-ico" title="Edit">
+                  <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4 11.5-11.5Z"/></svg>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td class="name">Black Pepper</td>
+            <td class="muted">1005</td>
+            <td class="muted">Gram</td>
+            <td class="muted price-idr">IDR 20</td>
+            <td class="muted price-idr">IDR 2</td>
+            <td class="muted">—</td>
+            <td class="muted">0</td>
+            <td class="muted">Active</td>
+            <td>
+              <div class="actions">
+                <div class="mini-ico" title="Delete">
+                  <svg viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M9 7V5h6v2"/><path d="M7 7l1 14h8l1-14"/></svg>
+                </div>
+                <div class="mini-ico" title="Edit">
+                  <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4 11.5-11.5Z"/></svg>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td class="name">Black Pepper Sauce</td>
+            <td class="muted">1007</td>
+            <td class="muted">Gram</td>
+            <td class="muted price-idr">IDR 763</td>
+            <td class="muted price-idr">IDR 76</td>
+            <td class="muted">—</td>
+            <td class="muted">0</td>
+            <td class="muted">Active</td>
+            <td>
+              <div class="actions">
+                <div class="mini-ico" title="Delete">
+                  <svg viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M9 7V5h6v2"/><path d="M7 7l1 14h8l1-14"/></svg>
+                </div>
+                <div class="mini-ico" title="Edit">
+                  <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4 11.5-11.5Z"/></svg>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td class="name">Black Sesame</td>
+            <td class="muted">1006</td>
+            <td class="muted">Gram</td>
+            <td class="muted price-idr">IDR 74</td>
+            <td class="muted price-idr">IDR 7</td>
+            <td class="muted">—</td>
+            <td class="muted">0</td>
+            <td class="muted">Active</td>
+            <td>
+              <div class="actions">
+                <div class="mini-ico" title="Delete">
+                  <svg viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M9 7V5h6v2"/><path d="M7 7l1 14h8l1-14"/></svg>
+                </div>
+                <div class="mini-ico" title="Edit">
+                  <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4 11.5-11.5Z"/></svg>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td class="name">Bok Choy</td>
+            <td class="muted">2101</td>
+            <td class="muted">Gram</td>
+            <td class="muted price-idr">IDR 50</td>
+            <td class="muted price-idr">IDR 5</td>
+            <td class="muted">—</td>
+            <td class="muted">0</td>
+            <td class="muted">Active</td>
+            <td>
+              <div class="actions">
+                <div class="mini-ico" title="Delete">
+                  <svg viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M9 7V5h6v2"/><path d="M7 7l1 14h8l1-14"/></svg>
+                </div>
+                <div class="mini-ico" title="Edit">
+                  <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4 11.5-11.5Z"/></svg>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td class="name">Bread</td>
+            <td class="muted">4001</td>
+            <td class="muted">Gram</td>
+            <td class="muted price-idr">IDR 75</td>
+            <td class="muted price-idr">IDR 8</td>
+            <td class="muted">—</td>
+            <td class="muted">0</td>
+            <td class="muted">Active</td>
+            <td>
+              <div class="actions">
+                <div class="mini-ico" title="Delete">
+                  <svg viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M9 7V5h6v2"/><path d="M7 7l1 14h8l1-14"/></svg>
+                </div>
+                <div class="mini-ico" title="Edit">
+                  <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4 11.5-11.5Z"/></svg>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td class="name">Burger Bread</td>
+            <td class="muted">4002</td>
+            <td class="muted">Unit</td>
+            <td class="muted price-idr">IDR 13963</td>
+            <td class="muted price-idr">—</td>
+            <td class="muted">—</td>
+            <td class="muted">0</td>
+            <td class="muted">Active</td>
+            <td>
+              <div class="actions">
+                <div class="mini-ico" title="Delete">
+                  <svg viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M9 7V5h6v2"/><path d="M7 7l1 14h8l1-14"/></svg>
+                </div>
+                <div class="mini-ico" title="Edit">
+                  <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4 11.5-11.5Z"/></svg>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td class="name">Butter</td>
+            <td class="muted">1008</td>
+            <td class="muted">Gram</td>
+            <td class="muted price-idr">IDR 150</td>
+            <td class="muted price-idr">IDR 15</td>
+            <td class="muted">—</td>
+            <td class="muted">0</td>
+            <td class="muted">Active</td>
+            <td>
+              <div class="actions">
+                <div class="mini-ico" title="Delete">
+                  <svg viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M9 7V5h6v2"/><path d="M7 7l1 14h8l1-14"/></svg>
+                </div>
+                <div class="mini-ico" title="Edit">
+                  <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4 11.5-11.5Z"/></svg>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+
+      </table>
+    </div>
+  
+    </section>
+
+    <section class="view" id="viewDetail">
+      <div class="breadcrumb">
+        <span>Stock management</span>
+        <span class="crumb-dot">›</span>
+        <span>Ingredients</span>
+        <span class="crumb-dot">›</span>
+        <span id="detailCrumbName">Anise Star</span>
+      </div>
+
+      <div class="detail-head">
+        <div>
+          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+            <h1 class="page-title" id="detailTitle" style="margin:0;">Anise Star</h1>
+            <div class="status-pill" id="detailStatus" style="margin:0;"><span class="dot"></span> Active</div>
+          </div>
+          <p class="page-desc" style="margin-top:6px;">
+            Ingredient detail (read-only). Review stock status, controls, and movement history.
+          </p>
+        </div>
+
+        <div class="page-actions">
+          <button class="back-btn" id="btnBack">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+            Back to list
+          </button>
+          <div class="secondary-pill" title="Read-only">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 17a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"></path>
+              <path d="M3 12s3-7 9-7 9 7 9 7-3 7-9 7-9-7-9-7Z"></path>
+            </svg>
+            View only
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="padding:16px;">
+        <div class="detail-grid">
+          <div class="detail-card">
+            <div class="k">Name</div>
+            <div class="v"><span id="dName">Anise Star</span><span class="muted" style="font-weight:900;">SKU 1001</span></div>
+          </div>
+
+          <div class="detail-card">
+            <div class="k">Unit</div>
+            <div class="v"><span id="dUnit">Gram</span><span class="muted" style="font-weight:900;">—</span></div>
+          
+
+          <div class="detail-card">
+            <div class="k">Unit price (per 100g)</div>
+            <div class="v"><span id="dUnitPrice">IDR 23</span><span class="muted" style="font-weight:900;">—</span></div>
+            <div class="sub">Reference unit cost for quick comparisons (prototype).</div>
+          </div>
+</div>
+
+          <div class="detail-card">
+            <div class="k">Amount (Current stock)</div>
+            <div class="v"><span id="dAmount">790 g</span><span class="muted" style="font-weight:900;">—</span></div>
+          </div>
+
+          <div class="detail-card">
+            <div class="k">Reorder point</div>
+            <div class="v"><span id="dReorder">500 g</span><span class="muted" style="font-weight:900;">—</span></div>
+            <div class="sub">Below this point, the system can recommend reorder (prototype).</div>
+          </div>
+
+          <div class="detail-card">
+            <div class="k">Status</div>
+            <div class="v"><span>Active</span><span class="muted" style="font-weight:900;">—</span></div>
+          </div>
+
+          <div class="detail-card">
+            <div class="k">Nearest shelf life</div>
+            <div class="v"><span id="dShelf">2026-02-14</span><span class="muted" style="font-weight:900;">—</span></div>
+            <div class="sub">Closest batch expiration date among available stock.</div>
+          </div>
+</div>
+      </div>
+
+      
+<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:18px;">
+  <div class="section-title" style="margin:0;">In &amp; Out history</div>
+  <button class="primary-btn" id="btnAdjust" style="height:38px;padding:0 14px;border-radius:12px;box-shadow:none;">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 5v14M5 12h14" stroke-linecap="round"/>
+    </svg>
+    Manual adjustment
+  </button>
+</div>
+
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Type</th>
+            <th>Reference</th>
+            <th>Qty</th>
+            <th>Unit</th>
+            <th>Balance</th>
+            <th>Note</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="muted">2026-01-08</td>
+            <td><span class="badge-in">IN</span></td>
+            <td class="muted">PO-1021</td>
+            <td>+1000</td>
+            <td class="muted">g</td>
+            <td>1000</td>
+            <td class="muted">Supplier delivery</td>
+          </tr>
+          <tr>
+            <td class="muted">2026-01-10</td>
+            <td><span class="badge-out">OUT</span></td>
+            <td class="muted">Sale #88421</td>
+            <td>-120</td>
+            <td class="muted">g</td>
+            <td>880</td>
+            <td class="muted">Recipe deduction</td>
+          </tr>
+          <tr>
+            <td class="muted">2026-01-12</td>
+            <td><span class="badge-out">OUT</span></td>
+            <td class="muted">Waste log</td>
+            <td>-30</td>
+            <td class="muted">g</td>
+            <td>850</td>
+            <td class="muted">Expired portion</td>
+          </tr>
+          <tr>
+            <td class="muted">2026-01-15</td>
+            <td><span class="badge-out">OUT</span></td>
+            <td class="muted">Sale #88902</td>
+            <td>-80</td>
+            <td class="muted">g</td>
+            <td>770</td>
+            <td class="muted">Recipe deduction</td>
+          </tr>
+          <tr>
+            <td class="muted">2026-01-18</td>
+            <td><span class="badge-in">IN</span></td>
+            <td class="muted">Adjustment</td>
+            <td>+20</td>
+            <td class="muted">g</td>
+            <td>790</td>
+            <td class="muted">Stock count correction</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+
+
+  <!-- Manual adjustment modal -->
+  <div class="modal-overlay" id="adjustOverlay" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="adjustTitle">
+      <div class="modal-head">
+        <div>
+          <h3 class="modal-title" id="adjustTitle">Manual stock adjustment</h3>
+          <div class="modal-sub">
+            Log a one-off inventory change and keep the movement history accurate.
+          </div>
+        </div>
+        <button class="ghost-btn" id="btnAdjustClose" title="Close">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"></path>
+          </svg>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="form-field">
+            <div class="k">Type</div>
+            <div class="v">
+              <select id="adjType" aria-label="Type">
+                <option value="IN">IN (Add stock)</option>
+                <option value="OUT">OUT (Reduce stock)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-field">
+            <div class="k">Reason</div>
+            <div class="v">
+              <select id="adjReason" aria-label="Reason">
+                <option>Waste / spoilage</option>
+                <option>Stock count variance</option>
+                <option>Damaged goods</option>
+                <option>Staff meal</option>
+                <option>Internal transfer</option>
+                <option>Other</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-field">
+            <div class="k">Quantity</div>
+            <div class="v">
+              <input id="adjQty" type="number" min="0" step="1" value="0" aria-label="Quantity" />
+            </div>
+          </div>
+
+          <div class="form-field">
+            <div class="k">Unit</div>
+            <div class="v">
+              <input type="text" value="g" disabled aria-label="Unit" />
+            </div>
+          </div>
+
+          <div class="form-field">
+            <div class="k">Date</div>
+            <div class="v">
+              <input id="adjDate" type="date" aria-label="Date" />
+            </div>
+          </div>
+
+          <div class="form-field wide">
+            <div class="k">Note (optional)</div>
+            <div class="v">
+              <input id="adjNote" type="text" placeholder="e.g. counted after closing shift" aria-label="Note" />
+            </div>
+            <div class="hint">This is a UI-only prototype. The record will be added to the history list.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-foot">
+        <button class="btn-secondary" id="btnAdjustCancel">Cancel</button>
+        <button class="primary-btn" id="btnAdjustSave" style="box-shadow:none;">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M5 12l4 4L19 6" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+          Save record
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">Saved</div>
+
+
+  <!-- Help widget -->
+  <div class="help-widget">
+    <div class="help-menu" id="helpMenu">
+      <button class="close-x" id="helpClose" title="Close">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"></path>
+        </svg>
+      </button>
+      <div class="help-item">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="9"></circle>
+          <path d="M12 18h.01"></path>
+          <path d="M9.1 9a3 3 0 1 1 5.8 1c0 2-3 2-3 4"></path>
+        </svg>
+        Help &amp; Support
+      </div>
+      <div class="help-item">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 4h16v12H7l-3 3V4z"></path>
+          <path d="M8 9h8M8 12h6" stroke-linecap="round"></path>
+        </svg>
+        Give Feedback
+      </div>
+    </div>
+
+    
+
+
+  <script>
+function formatIDR(valueText){
+      const t = String(valueText || '').trim();
+      if (!t || t === '—') return t;
+      // Avoid double prefix
+      if (t.startsWith('IDR ')) return t;
+      return 'IDR ' + t;
+    }
+
+    function applyIDRFormatting(){
+      // List: price cells
+      document.querySelectorAll('.price-idr').forEach(td => {
+        td.textContent = formatIDR(td.textContent);
+      });
+
+      // Detail: unit price per 100g
+      const dUnitPrice = document.getElementById('dUnitPrice');
+      if (dUnitPrice) dUnitPrice.textContent = formatIDR(dUnitPrice.textContent);
+    }
+
+    // Sidebar accordion toggles
+    document.querySelectorAll('.menu-item[data-toggle]').forEach(item => {
+      item.addEventListener('click', () => {
+        const key = item.getAttribute('data-toggle');
+        const submenu = document.querySelector('.submenu[data-submenu="'+key+'"]');
+        if (!submenu) return;
+        const isOpen = submenu.classList.contains('open');
+        submenu.classList.toggle('open', !isOpen);
+        item.classList.toggle('open', !isOpen);
+      });
+    });
+
+    // Name filter
+    const nameFilter = document.getElementById('nameFilter');
+    const rows = Array.from(document.querySelectorAll('#ingredientsTable tbody tr'));
+    if (nameFilter){
+      nameFilter.addEventListener('input', () => {
+        const q = nameFilter.value.trim().toLowerCase();
+        rows.forEach(tr => {
+          const name = tr.children[0].textContent.trim().toLowerCase();
+          tr.style.display = name.includes(q) ? '' : 'none';
+        });
+      });
+    }
+
+    // Help menu toggle
+    const helpBtn = document.getElementById('helpBtn');
+    const helpMenu = document.getElementById('helpMenu');
+    const helpClose = document.getElementById('helpClose');
+    function closeHelp(){ if (helpMenu) helpMenu.classList.remove('open'); }
+    if (helpBtn){
+      helpBtn.addEventListener('click', (e) => { e.stopPropagation(); helpMenu.classList.toggle('open'); });
+    }
+    if (helpClose){
+      helpClose.addEventListener('click', (e) => { e.stopPropagation(); closeHelp(); });
+    }
+    document.addEventListener('click', closeHelp);
+
+    // Prototype only: Add button
+    const btnAdd = document.getElementById('btnAdd');
+    if (btnAdd){
+      btnAdd.addEventListener('click', () => {
+        alert('Prototype: Add Ingredients (modal would open here)');
+      });
+    }
+
+    // Simple routing between List and Detail (single ingredient)
+    const viewList = document.getElementById('viewList');
+    const viewDetail = document.getElementById('viewDetail');
+    const rowAnise = document.getElementById('rowAnise');
+    const btnBack = document.getElementById('btnBack');
+
+    function showList(){
+      if (viewList) viewList.classList.add('active');
+      if (viewDetail) viewDetail.classList.remove('active');
+      window.scrollTo({ top: 0, behavior: 'instant' });
+      syncFromProtoBalance();
+      applyIDRFormatting();
+    applyIDRFormatting();
+    }
+
+    function showDetail(){
+      if (viewList) viewList.classList.remove('active');
+      if (viewDetail) viewDetail.classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'instant' });
+      // Ensure newest movement is always on top
+      sortHistoryByDateDesc();
+      applyIDRFormatting();
+      syncFromHistoryTop();
+      applyIDRFormatting();
+    }
+
+    
+    
+    function sortHistoryByDateDesc(){
+      const tbody = document.querySelector('.history-table tbody');
+      if (!tbody) return;
+      const rows = Array.from(tbody.querySelectorAll('tr'));
+      rows.sort((a,b) => {
+        const da = (a.querySelector('td')?.textContent || '').trim();
+        const db = (b.querySelector('td')?.textContent || '').trim();
+        // Expect YYYY-MM-DD
+        return db.localeCompare(da);
+      });
+      rows.forEach(r => tbody.appendChild(r));
+    }
+
+
+    function route(){
+      const h = window.location.hash || '#/ingredients';
+      if (h === '#/ingredient/anise-star'){
+        showDetail();
+      } else {
+        showList();
+      }
+    }
+
+    if (rowAnise){
+      rowAnise.addEventListener('click', (e) => {
+        const insideAction = e.target.closest('.mini-ico');
+        if (insideAction) return;
+        window.location.hash = '#/ingredient/anise-star';
+      });
+    }
+
+    if (btnBack){
+      btnBack.addEventListener('click', () => {
+        window.location.hash = '#/ingredients';
+      });
+    }
+
+    window.addEventListener('hashchange', route);
+    route();
+    // Ensure list stock matches the latest balance
+    syncFromProtoBalance();
+      applyIDRFormatting();
+    applyIDRFormatting();
+
+    // Manual adjustment modal (UI only)
+    const btnAdjust = document.getElementById('btnAdjust');
+    const adjustOverlay = document.getElementById('adjustOverlay');
+    const btnAdjustClose = document.getElementById('btnAdjustClose');
+    const btnAdjustCancel = document.getElementById('btnAdjustCancel');
+    const btnAdjustSave = document.getElementById('btnAdjustSave');
+    const adjType = document.getElementById('adjType');
+    const adjReason = document.getElementById('adjReason');
+    const adjQty = document.getElementById('adjQty');
+    const adjDate = document.getElementById('adjDate');
+    const adjNote = document.getElementById('adjNote');
+    const toast = document.getElementById('toast');
+
+    function todayISO(){
+      const d = new Date();
+      const mm = String(d.getMonth()+1).padStart(2,'0');
+      const dd = String(d.getDate()).padStart(2,'0');
+      return d.getFullYear() + '-' + mm + '-' + dd;
+    }
+
+    function openAdjust(){
+      if (!adjustOverlay) return;
+      adjQty.value = 0;
+      if (adjDate) adjDate.value = todayISO();
+      if (adjNote) adjNote.value = '';
+      adjustOverlay.classList.add('open');
+      adjustOverlay.setAttribute('aria-hidden','false');
+      document.body.style.overflow = 'hidden';
+      setTimeout(() => { if (adjQty) adjQty.focus(); }, 50);
+    }
+
+    function closeAdjust(){
+      if (!adjustOverlay) return;
+      adjustOverlay.classList.remove('open');
+      adjustOverlay.setAttribute('aria-hidden','true');
+      document.body.style.overflow = '';
+    }
+
+    function showToast(msg){
+      if (!toast) return;
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 1800);
+    }
+
+    function addHistoryRow({date, type, reason, qty, unit, balance, note}){
+      const table = document.querySelector('.history-table tbody');
+      if (!table) return;
+
+      const badge = type === 'IN'
+        ? '<span class="badge-in">IN</span>'
+        : '<span class="badge-out">OUT</span>';
+
+      const qtyText = (type === 'IN' ? '+' : '-') + qty;
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td class="muted">${date}</td>
+        <td>${badge}</td>
+        <td class="muted">Manual adjustment</td>
+        <td>${qtyText}</td>
+        <td class="muted">${unit}</td>
+        <td>${balance}</td>
+        <td class="muted">${reason}${note ? ' · ' + note : ''}</td>
+      `;
+
+      // prepend
+      table.insertBefore(tr, table.firstChild);
+      // Keep newest on top even if dates vary
+      sortHistoryByDateDesc();
+      applyIDRFormatting();
+      syncFromHistoryTop();
+      applyIDRFormatting();
+    }
+
+    // For the prototype: we keep an internal "balance" number starting from the last shown balance (790)
+    let protoBalance = 790;
+
+    function syncFromProtoBalance(){
+      // Detail page amount
+      const dAmount = document.getElementById('dAmount');
+      if (dAmount) dAmount.textContent = protoBalance + ' g';
+
+      // List page stock cell (only for Anise in this prototype)
+      const stockTd = document.getElementById('stockAnise');
+      if (stockTd) stockTd.textContent = String(protoBalance);
+    }
+
+    function syncFromHistoryTop(){
+      // Read the newest row's balance and sync (after sorting)
+      const tbody = document.querySelector('.history-table tbody');
+      if (!tbody) return;
+      const firstRow = tbody.querySelector('tr');
+      if (!firstRow) return;
+      const tds = firstRow.querySelectorAll('td');
+      if (tds.length < 6) return;
+      const bal = parseInt((tds[5].textContent || '').trim(), 10);
+      if (!isNaN(bal)){
+        protoBalance = bal;
+        syncFromProtoBalance();
+      applyIDRFormatting();
+    applyIDRFormatting();
+      }
+    }
+
+
+    if (btnAdjust){
+      btnAdjust.addEventListener('click', () => {
+        // Only open when detail view is active
+        if (window.location.hash === '#/ingredient/anise-star') openAdjust();
+        else {
+          // if user clicks from list, go to detail first
+          window.location.hash = '#/ingredient/anise-star';
+          setTimeout(openAdjust, 120);
+        }
+      });
+    }
+
+    [btnAdjustClose, btnAdjustCancel].forEach(btn => {
+      if (btn) btn.addEventListener('click', closeAdjust);
+    });
+
+    if (adjustOverlay){
+      adjustOverlay.addEventListener('click', (e) => {
+        if (e.target === adjustOverlay) closeAdjust();
+      });
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && adjustOverlay && adjustOverlay.classList.contains('open')) closeAdjust();
+    });
+
+    if (btnAdjustSave){
+      btnAdjustSave.addEventListener('click', () => {
+        const type = adjType.value;
+        const reason = adjReason.value;
+        const qty = Math.max(0, parseInt(adjQty.value || '0', 10));
+        const date = (adjDate && adjDate.value) ? adjDate.value : todayISO();
+        const note = (adjNote && adjNote.value || '').trim();
+        const unit = 'g';
+
+        if (!qty){
+          showToast('Please enter quantity');
+          if (adjQty) adjQty.focus();
+          return;
+        }
+
+        // Update proto balance
+        protoBalance = type === 'IN' ? (protoBalance + qty) : Math.max(0, protoBalance - qty);
+
+        // Sync amount across pages
+        syncFromProtoBalance();
+      applyIDRFormatting();
+    applyIDRFormatting();
+
+        // Add row
+        addHistoryRow({date, type, reason, qty, unit, balance: protoBalance, note});
+        sortHistoryByDateDesc();
+      applyIDRFormatting();
+      syncFromHistoryTop();
+      applyIDRFormatting();
+
+        // Show toast + close
+        showToast('Adjustment recorded');
+        closeAdjust();
+      });
+    }
+
+  
+
+    // Apply IDR formatting on first paint
+    document.addEventListener('DOMContentLoaded', () => {
+      applyIDRFormatting();
+    });
+</script>
+
+</body>
+</html>

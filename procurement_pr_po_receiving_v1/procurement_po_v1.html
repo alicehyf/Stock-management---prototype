@@ -1,0 +1,1995 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Purchase orders - Komodo Resort New</title>
+  <style>
+:root{
+      --blue:#1f57ff;
+      --blue-2:#1a49d6;
+      --bg:#f6f7fb;
+      --card:#ffffff;
+      --text:#111827;
+      --muted:#6b7280;
+      --line:#e5e7eb;
+
+      --shadow: 0 10px 25px rgba(17,24,39,.08);
+      --shadow-soft: 0 6px 18px rgba(17,24,39,.10);
+
+      --radius:14px;
+      --radius-sm:10px;
+
+      --sidebar-w: 270px;
+      --topbar-h: 64px;
+
+      --nav-hover:#f3f4f6;
+      --nav-open-bg:#eef3ff;
+      --nav-active-bg:#e7efff;
+
+      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:var(--font);
+      color:var(--text);
+      background:var(--bg);
+      overflow-x:hidden;
+    }
+
+    /* Top bar */
+    .topbar{
+      position:sticky;
+      top:0;
+      z-index:80;
+      height:var(--topbar-h);
+      background:var(--blue);
+      color:#fff;
+      display:flex;
+      align-items:center;
+      padding:0 18px;
+      gap:14px;
+      box-shadow: 0 2px 0 rgba(255,255,255,.05);
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      min-width:260px;
+    }
+    .brand .app-icon{
+      width:28px;height:28px;border-radius:7px;
+      background:rgba(255,255,255,.18);
+      display:grid;place-items:center;
+    }
+    .brand .title{
+      font-weight:650;
+      letter-spacing:.2px;
+      display:flex;
+      align-items:center;
+      gap:6px;
+      white-space:nowrap;
+    }
+    .brand .caret{
+      width:10px;height:10px;opacity:.85;
+      transform:translateY(1px);
+    }
+
+    .global-search{
+      flex:1;
+      display:flex;
+      justify-content:center;
+    }
+    .global-search .searchbox{
+      width:min(860px, 100%);
+      background:#fff;
+      color:var(--text);
+      border-radius:999px;
+      height:40px;
+      display:flex;
+      align-items:center;
+      padding:0 14px 0 16px;
+      gap:10px;
+      box-shadow: 0 6px 16px rgba(0,0,0,.12);
+    }
+    .global-search input{
+      border:0;outline:0;
+      width:100%;
+      font-size:14px;
+    }
+    .global-search .magnify{
+      width:18px;height:18px;opacity:.55;
+    }
+
+    .top-actions{
+      display:flex;
+      align-items:center;
+      gap:14px;
+    }
+    .icon-btn{
+      width:34px;height:34px;
+      border-radius:10px;
+      display:grid;place-items:center;
+      background:rgba(255,255,255,.12);
+      border:1px solid rgba(255,255,255,.12);
+      cursor:pointer;
+    }
+    .icon-btn:hover{background:rgba(255,255,255,.18)}
+    .icon-btn svg{width:18px;height:18px;fill:none;stroke:#fff;stroke-width:2}
+    .avatar{
+      width:34px;height:34px;border-radius:999px;
+      background:rgba(255,255,255,.18);
+      display:grid;place-items:center;
+      font-weight:700;
+      border:1px solid rgba(255,255,255,.18);
+    }
+
+    /* Fixed sidebar (full menu) */
+    .sidebar{
+      position:fixed;
+      top:var(--topbar-h);
+      left:0;
+      bottom:0;
+      width:var(--sidebar-w);
+      background:#fff;
+      border-right:1px solid var(--line);
+      overflow:auto;
+      padding:14px 10px 18px;
+      z-index:70;
+    }
+
+    .menu-group{margin-top:6px}
+    .menu-item{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      padding:12px 12px;
+      border-radius:14px;
+      color:#111827;
+      cursor:pointer;
+      user-select:none;
+    }
+    .menu-item:hover{background:var(--nav-hover)}
+    .menu-item .ico{
+      width:28px;height:28px;border-radius:10px;
+      display:grid;place-items:center;
+      background:#f3f4f6;
+      border:1px solid #eef2f7;
+      flex:0 0 auto;
+    }
+    .menu-item .ico svg{width:18px;height:18px;fill:none;stroke:#4b5563;stroke-width:2}
+    .menu-item .label{
+      flex:1;
+      font-weight:650;
+    }
+    .menu-item .chev{
+      width:18px;height:18px;
+      fill:none;stroke:#9ca3af;stroke-width:2;
+      transition:transform .15s ease;
+    }
+
+    .menu-item.open{ background:var(--nav-open-bg); }
+    .menu-item.open .chev{ transform:rotate(180deg); stroke:#6b7280; }
+
+    .submenu{
+      margin:6px 0 10px 52px;
+      display:none;
+    }
+    .submenu.open{display:block;}
+    .submenu a{
+      display:block;
+      text-decoration:none;
+      color:#374151;
+      padding:10px 12px;
+      border-radius:12px;
+      font-weight:600;
+    }
+    .submenu a:hover{background:var(--nav-hover)}
+    .submenu a.active{
+      background:var(--nav-active-bg);
+      color:var(--blue);
+    }
+
+    .sidebar-divider{height:1px;background:var(--line);margin:12px 8px}
+
+    /* Main content area */
+    .content{
+      margin-left:var(--sidebar-w);
+      padding:18px 20px 70px;
+      max-width: 1400px;
+    }
+
+    .breadcrumb{
+      color:var(--muted);
+      font-size:13px;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      margin:4px 0 10px;
+    }
+    .crumb-dot{opacity:.5}
+
+    .page-head{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:16px;
+      margin-bottom:14px;
+    }
+    .page-title{
+      font-size:30px;
+      font-weight:750;
+      margin:0;
+      letter-spacing:-.2px;
+    }
+    .page-desc{
+      margin:4px 0 0;
+      color:var(--muted);
+      max-width:860px;
+      line-height:1.45;
+      font-size:14px;
+    }
+
+    .primary-btn{
+      height:40px;
+      padding:0 16px;
+      border-radius:12px;
+      border:0;
+      background:var(--blue);
+      color:#fff;
+      font-weight:650;
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      cursor:pointer;
+      box-shadow: 0 10px 20px rgba(31,87,255,.22);
+      white-space:nowrap;
+    }
+    .primary-btn:hover{background:var(--blue-2)}
+    .primary-btn svg{width:16px;height:16px;fill:none;stroke:#fff;stroke-width:2}
+
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow: 0 1px 0 rgba(17,24,39,.02);
+    }
+
+    .filters{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin:16px 0 12px;
+    }
+    .search-inline{
+      width:320px;
+      max-width:100%;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:10px 12px;
+    }
+    .search-inline input{
+      border:0;outline:0;width:100%;
+      font-size:14px;
+    }
+    .search-inline svg{
+      width:18px;height:18px;
+      stroke:#9ca3af;stroke-width:2;fill:none;
+    }
+
+    /* Table */
+    .table-wrap{
+      overflow:auto;
+      border-radius:var(--radius);
+    }
+    table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
+      min-width: 980px;
+      background:#fff;
+    }
+    thead th{
+      text-align:left;
+      font-size:12px;
+      color:#6b7280;
+      font-weight:700;
+      padding:14px 16px;
+      border-bottom:1px solid var(--line);
+      background:#fbfbfd;
+      position:sticky;
+      top:0;
+      z-index:1;
+      white-space:nowrap;
+    }
+    tbody td{
+      padding:14px 16px;
+      border-bottom:1px solid var(--line);
+      font-size:14px;
+      color:#111827;
+      white-space:nowrap;
+    }
+    tbody tr:hover{background:#fafafa}
+    .name{font-weight:650;}
+    .muted{color:var(--muted)}
+
+    .actions{
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .mini-ico{
+      width:34px;height:34px;
+      border-radius:10px;
+      border:1px solid var(--line);
+      background:#fff;
+      display:grid;place-items:center;
+      cursor:pointer;
+    }
+    .mini-ico:hover{background:#f3f4f6}
+    .mini-ico svg{
+      width:16px;height:16px;
+      fill:none;stroke:#374151;stroke-width:2;
+    }
+
+    /* Clickable row hint (only 1 row will use this) */
+    .clickable-row td{ cursor:pointer; }
+    .clickable-row .name{ color:#0f2ea6; }
+    .clickable-row:hover{ background:#f6f8ff; }
+
+    /* Help widget */
+    .help-widget{
+      position:fixed;
+      right:22px;
+      bottom:20px;
+      z-index:90;
+      display:flex;
+      flex-direction:column;
+      align-items:flex-end;
+      gap:10px;
+    }
+    .help-menu{
+      width:240px;
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:16px;
+      box-shadow:var(--shadow-soft);
+      overflow:hidden;
+      display:none;
+      position:relative;
+    }
+    .help-menu.open{display:block}
+    .help-menu .close-x{
+      position:absolute;
+      top:8px;
+      right:8px;
+      width:28px;height:28px;
+      border-radius:10px;
+      border:1px solid var(--line);
+      background:#fff;
+      cursor:pointer;
+      display:grid;place-items:center;
+    }
+    .help-menu .close-x:hover{background:#f3f4f6}
+    .help-menu .close-x svg{width:14px;height:14px;stroke:#6b7280;stroke-width:2;fill:none}
+
+    .help-item{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:12px 14px;
+      cursor:pointer;
+      font-weight:650;
+      color:#1f2937;
+      border-bottom:1px solid var(--line);
+    }
+    .help-item:last-child{border-bottom:0}
+    .help-item:hover{background:#f8fafc}
+    .help-item svg{width:18px;height:18px;fill:none;stroke:var(--blue);stroke-width:2}
+
+    .help-btn{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 14px;
+      border-radius:999px;
+      border:0;
+      background:var(--blue);
+      color:#fff;
+      font-weight:750;
+      cursor:pointer;
+      box-shadow: 0 12px 24px rgba(31,87,255,.28);
+    }
+    .help-btn:hover{background:var(--blue-2)}
+    .help-btn svg{width:18px;height:18px;fill:none;stroke:#fff;stroke-width:2}
+
+    .global-search{display:none}
+      .content{padding:16px 14px 80px}
+      .page-head{flex-direction:column;align-items:flex-start}
+      .filters{flex-direction:column;align-items:flex-start}
+      .search-inline{width:100%}
+      table{min-width:860px}
+      :root{ --sidebar-w: 250px; }
+      .drawer{ width: 92vw; }
+    }
+  
+    /* Views */
+    .view{ display:none; }
+    .view.active{ display:block; }
+
+    .detail-head{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:16px;
+      margin:8px 0 14px;
+    }
+    .back-btn{
+      height:36px;
+      padding:0 12px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:#fff;
+      cursor:pointer;
+      font-weight:800;
+      color:#374151;
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+    }
+    .back-btn:hover{background:#f3f4f6}
+    .back-btn svg{width:16px;height:16px;fill:none;stroke:#374151;stroke-width:2}
+
+    .page-actions{
+      display:flex;
+      gap:10px;
+      align-items:center;
+    }
+    .secondary-pill{
+      height:40px;
+      padding:0 14px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:#fff;
+      font-weight:900;
+      color:#374151;
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      cursor:default;
+    }
+    .secondary-pill svg{width:18px;height:18px;fill:none;stroke:#6b7280;stroke-width:2}
+
+    /* Detail cards */
+    .detail-grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+      margin-top:14px;
+    }
+    .detail-card{
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      background:#fff;
+      padding:14px 14px;
+    }
+    .detail-card .k{
+      font-size:12px;
+      color:#6b7280;
+      font-weight:900;
+      margin-bottom:10px;
+    }
+    .detail-card .v{
+      font-size:16px;
+      font-weight:900;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .detail-card .sub{
+      margin-top:8px;
+      font-size:12px;
+      color:var(--muted);
+      font-weight:750;
+      line-height:1.35;
+    }
+    .detail-card.wide{ grid-column: 1 / -1; }
+
+    .detail-card.wide{ grid-column: auto; }
+    }
+
+  
+    /* Modal */
+    .modal-overlay{
+      position:fixed;
+      inset:0;
+      background:rgba(17,24,39,.35);
+      z-index:120;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+    }
+    .modal-overlay.open{ display:flex; }
+
+    .modal{
+      width: 520px;
+      max-width: 100%;
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:18px;
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .modal-head{
+      padding:16px 16px 12px;
+      border-bottom:1px solid var(--line);
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .modal-title{
+      margin:0;
+      font-size:18px;
+      font-weight:900;
+      letter-spacing:-.2px;
+    }
+    .modal-sub{
+      margin:6px 0 0;
+      color:var(--muted);
+      font-size:13px;
+      font-weight:700;
+      line-height:1.35;
+    }
+    .modal-body{
+      padding:14px 16px 16px;
+    }
+    .form-grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+    }
+    .form-field{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px 12px;
+      background:#fff;
+    }
+    .form-field .k{
+      font-size:12px;
+      color:#6b7280;
+      font-weight:900;
+      margin-bottom:8px;
+    }
+    .form-field .v{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      justify-content:space-between;
+    }
+    .form-field input, .form-field select{
+      width:100%;
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:10px 10px;
+      font-weight:800;
+      outline:none;
+      font-size:14px;
+      background:#fff;
+    }
+    .form-field input:focus, .form-field select:focus{
+      border-color: rgba(31,87,255,.5);
+      box-shadow: 0 0 0 4px rgba(31,87,255,.10);
+    }
+    .form-field.wide{ grid-column: 1 / -1; }
+    .hint{
+      font-size:12px;
+      color:var(--muted);
+      font-weight:700;
+      margin-top:8px;
+      line-height:1.35;
+    }
+    .modal-foot{
+      padding:12px 16px 16px;
+      border-top:1px solid var(--line);
+      display:flex;
+      justify-content:flex-end;
+      gap:10px;
+    }
+    .btn-secondary{
+      height:40px;
+      padding:0 14px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:#fff;
+      cursor:pointer;
+      font-weight:900;
+      color:#374151;
+    }
+    .btn-secondary:hover{background:#f3f4f6}
+
+    /* Toast */
+    .toast{
+      position:fixed;
+      left:50%;
+      bottom:24px;
+      transform:translateX(-50%) translateY(20px);
+      background:#111827;
+      color:#fff;
+      padding:10px 14px;
+      border-radius:999px;
+      font-weight:800;
+      font-size:13px;
+      box-shadow: 0 14px 30px rgba(0,0,0,.25);
+      opacity:0;
+      pointer-events:none;
+      transition:opacity .18s ease, transform .18s ease;
+      z-index:140;
+      max-width: 90vw;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .toast.show{
+      opacity:1;
+      transform:translateX(-50%) translateY(0);
+    }
+
+    .form-field.wide{ grid-column:auto; }
+    }
+
+    /* Stock count */
+    .toolbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      flex-wrap:wrap;
+      margin-top:14px;
+    }
+    .control-row{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .select, .input{
+      height:40px;
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:0 12px;
+      background:#fff;
+      font-weight:800;
+      color:#111827;
+      outline:none;
+      min-width: 220px;
+    }
+    .select:focus, .input:focus{
+      border-color: rgba(31,87,255,.5);
+      box-shadow: 0 0 0 4px rgba(31,87,255,.10);
+    }
+    .input.small{ min-width: 140px; width:140px; }
+    .select.small{ min-width: 180px; }
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:#fff;
+      font-size:12px;
+      font-weight:900;
+      color:#374151;
+    }
+    .pill .dot{
+      width:8px;height:8px;border-radius:999px;background:#9ca3af;
+    }
+    .banner{
+      border:1px solid var(--line);
+      background:#fff;
+      border-radius:18px;
+      padding:12px 14px;
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+      margin-top:14px;
+      box-shadow: var(--shadow-soft);
+    }
+    .banner .b-title{ font-weight:950; }
+    .banner .b-sub{ color:var(--muted); font-weight:750; font-size:13px; margin-top:4px; line-height:1.35; }
+    .banner.warn{
+      border-color:#fde68a;
+      background:#fffbeb;
+    }
+    .banner.warn .dot{ background:#f59e0b; box-shadow:0 0 0 3px rgba(245,158,11,.18); }
+    .banner.ok{
+      border-color:#bbf7d0;
+      background:#f0fdf4;
+    }
+    .banner.ok .dot{ background:#10b981; box-shadow:0 0 0 3px rgba(16,185,129,.16); }
+
+    .count-table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:18px;
+      overflow:hidden;
+      margin-top:14px;
+    }
+    .count-table thead th{
+      text-align:left;
+      font-size:13px;
+      color:#6b7280;
+      font-weight:900;
+      padding:14px 14px;
+      border-bottom:1px solid var(--line);
+      background:#fbfbfd;
+      white-space:nowrap;
+    }
+    .count-table tbody td{
+      padding:14px 14px;
+      border-bottom:1px solid #eef2f7;
+      font-weight:800;
+      vertical-align:middle;
+      white-space:nowrap;
+    }
+    .count-table tbody tr:last-child td{ border-bottom:none; }
+    .mono{ font-variant-numeric: tabular-nums; }
+    .cell-muted{ color:var(--muted); font-weight:750; }
+    .td-input{
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+    .td-input input{
+      height:36px;
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:0 10px;
+      width:110px;
+      outline:none;
+      font-weight:900;
+      background:#fff;
+    }
+    .td-input input:focus{
+      border-color: rgba(31,87,255,.5);
+      box-shadow: 0 0 0 4px rgba(31,87,255,.10);
+    }
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:950;
+      border:1px solid var(--line);
+      background:#fff;
+      color:#374151;
+    }
+    .badge .dot{
+      width:8px;height:8px;border-radius:999px;background:#9ca3af;
+    }
+    .badge.ok{
+      border-color:#bbf7d0;
+      background:#f0fdf4;
+      color:#0f766e;
+    }
+    .badge.ok .dot{ background:#10b981; box-shadow:0 0 0 3px rgba(16,185,129,.16); }
+    .badge.review{
+      border-color:#fde68a;
+      background:#fffbeb;
+      color:#92400e;
+    }
+    .badge.review .dot{ background:#f59e0b; box-shadow:0 0 0 3px rgba(245,158,11,.18); }
+    .badge.pending{
+      border-color:#e5e7eb;
+      background:#fff;
+      color:#374151;
+    }
+    .badge.pending .dot{ background:#9ca3af; }
+
+    /* Stepper */
+    .stepper{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:12px 14px;
+      border:1px solid var(--line);
+      background:#fff;
+      border-radius:18px;
+      box-shadow: var(--shadow-soft);
+      margin-top:14px;
+      flex-wrap:wrap;
+    }
+    .step{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:#fff;
+      font-weight:900;
+      font-size:13px;
+      color:#374151;
+    }
+    .step .num{
+      width:22px;height:22px;border-radius:999px;
+      display:grid;place-items:center;
+      border:1px solid var(--line);
+      background:#fbfbfd;
+      font-size:12px;
+      font-weight:950;
+      color:#6b7280;
+    }
+    .step.active{
+      border-color: rgba(31,87,255,.35);
+      background: var(--nav-open-bg);
+      color:#0b2bd6;
+    }
+    .step.active .num{
+      background: rgba(31,87,255,.10);
+      border-color: rgba(31,87,255,.35);
+      color:#0b2bd6;
+    }
+    .step.done{
+      border-color:#bbf7d0;
+      background:#f0fdf4;
+      color:#0f766e;
+    }
+    .step.done .num{
+      background:#ecfdf5;
+      border-color:#bbf7d0;
+      color:#0f766e;
+    }
+    .step-sep{
+      width:26px;height:2px;
+      background:#e5e7eb;
+      border-radius:999px;
+    }
+
+    /* Tabs / chips */
+    .chips{
+      display:flex;
+      gap:8px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .chip{
+      height:34px;
+      padding:0 12px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:#fff;
+      cursor:pointer;
+      font-weight:900;
+      color:#374151;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      font-size:13px;
+    }
+    .chip:hover{ background:#f3f4f6; }
+    .chip.active{
+      border-color: rgba(31,87,255,.35);
+      background: var(--nav-open-bg);
+      color:#0b2bd6;
+    }
+    .chip .count{
+      padding:2px 8px;
+      border-radius:999px;
+      background:#f3f4f6;
+      font-size:12px;
+      font-weight:950;
+      color:#374151;
+    }
+    .chip.active .count{
+      background: rgba(31,87,255,.12);
+      color:#0b2bd6;
+    }
+
+    /* Modal (reuse) */
+    .modal-overlay{
+      position:fixed;
+      inset:0;
+      background:rgba(17,24,39,.35);
+      z-index:120;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+    }
+    .modal-overlay.open{ display:flex; }
+    .modal{
+      width: 560px;
+      max-width: 100%;
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:18px;
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .modal-head{
+      padding:16px 16px 12px;
+      border-bottom:1px solid var(--line);
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .modal-title{
+      margin:0;
+      font-size:18px;
+      font-weight:900;
+      letter-spacing:-.2px;
+    }
+    .modal-sub{
+      margin:6px 0 0;
+      color:var(--muted);
+      font-size:13px;
+      font-weight:700;
+      line-height:1.35;
+    }
+    .modal-body{ padding:14px 16px 16px; }
+    .form-grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+    }
+    .form-field{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px 12px;
+      background:#fff;
+    }
+    .form-field .k{
+      font-size:12px;
+      color:#6b7280;
+      font-weight:900;
+      margin-bottom:8px;
+    }
+    .form-field .v{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      justify-content:space-between;
+    }
+    .form-field input, .form-field select{
+      width:100%;
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:10px 10px;
+      font-weight:800;
+      outline:none;
+      font-size:14px;
+      background:#fff;
+    }
+    .form-field input:focus, .form-field select:focus{
+      border-color: rgba(31,87,255,.5);
+      box-shadow: 0 0 0 4px rgba(31,87,255,.10);
+    }
+    .form-field.wide{ grid-column: 1 / -1; }
+    .modal-foot{
+      padding:12px 16px 16px;
+      border-top:1px solid var(--line);
+      display:flex;
+      justify-content:flex-end;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .btn-secondary{
+      height:40px;
+      padding:0 14px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:#fff;
+      cursor:pointer;
+      font-weight:900;
+      color:#374151;
+    }
+    .btn-secondary:hover{background:#f3f4f6}
+    .toast{
+      position:fixed;
+      left:50%;
+      bottom:24px;
+      transform:translateX(-50%) translateY(20px);
+      background:#111827;
+      color:#fff;
+      padding:10px 14px;
+      border-radius:999px;
+      font-weight:800;
+      font-size:13px;
+      box-shadow: 0 14px 30px rgba(0,0,0,.25);
+      opacity:0;
+      pointer-events:none;
+      transition:opacity .18s ease, transform .18s ease;
+      z-index:140;
+      max-width: 90vw;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .toast.show{
+      opacity:1;
+      transform:translateX(-50%) translateY(0);
+    }
+
+    /* Count table tweaks */
+    .count-table tbody td{ white-space:normal; }
+    .line-actions{
+      display:flex;
+      align-items:center;
+      justify-content:flex-end;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .link-btn{
+      border:none;
+      background:transparent;
+      color:#0b2bd6;
+      font-weight:950;
+      cursor:pointer;
+      padding:0;
+      font-size:13px;
+    }
+    .link-btn:hover{ text-decoration:underline; }
+    .mini-muted{ color:var(--muted); font-weight:750; font-size:12px; margin-top:4px; }
+    .batch-box{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:10px 10px;
+      background:#fbfbfd;
+      margin-top:10px;
+    }
+    .batch-row{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+      padding:8px 0;
+      border-bottom:1px dashed #e5e7eb;
+    }
+    .batch-row:last-child{ border-bottom:none; }
+    .batch-row input{
+      height:36px;
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:0 10px;
+      outline:none;
+      font-weight:900;
+      background:#fff;
+    }
+    .batch-row input:focus{
+      border-color: rgba(31,87,255,.5);
+      box-shadow: 0 0 0 4px rgba(31,87,255,.10);
+    }
+    .batch-row .qty{ width:120px; }
+    .batch-row .date{ width:170px; }
+    .tag{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:950;
+      border:1px solid var(--line);
+      background:#fff;
+      color:#374151;
+      white-space:nowrap;
+    }
+    .tag .dot{ width:8px;height:8px;border-radius:999px;background:#9ca3af; }
+    .tag.counted{
+      border-color:#bbf7d0;
+      background:#f0fdf4;
+      color:#0f766e;
+    }
+    .tag.counted .dot{ background:#10b981; box-shadow:0 0 0 3px rgba(16,185,129,.16); }
+    .tag.not{
+      border-color:#e5e7eb;
+      background:#fff;
+      color:#374151;
+    }
+    .tag.review{
+      border-color:#fde68a;
+      background:#fffbeb;
+      color:#92400e;
+    }
+    .tag.review .dot{ background:#f59e0b; box-shadow:0 0 0 3px rgba(245,158,11,.18); }
+    .right-actions{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      justify-content:flex-end;
+      flex-wrap:wrap;
+    }
+    .impact{
+      font-weight:950;
+      color:#111827;
+      font-size:13px;
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:999px;
+      padding:8px 10px;
+    }
+    .hidden{ display:none !important; }
+
+    .form-field.wide{ grid-column:auto; }
+    }
+    /* Procurement overview layout helpers */
+    .kpi-grid{ display:grid; grid-template-columns: repeat(12, 1fr); gap:14px; margin-top:14px; }
+    .kpi{ padding:14px; }
+    .kpi .k{ color:var(--muted); font-weight:900; font-size:12px; }
+    .kpi .v{ font-weight:950; font-size:24px; margin-top:6px; }
+    .kpi .s{ color:var(--muted); font-weight:750; font-size:13px; margin-top:6px; line-height:1.35; }
+    }
+    }
+
+
+    /* Procurement overview layout helpers */
+    .kpi-grid{ display:grid; grid-template-columns: repeat(12, 1fr); gap:14px; margin-top:14px; }
+    .kpi{ padding:14px; }
+    .kpi .k{ color:var(--muted); font-weight:900; font-size:12px; }
+    .kpi .v{ font-weight:950; font-size:24px; margin-top:6px; }
+    .kpi .s{ color:var(--muted); font-weight:750; font-size:13px; margin-top:6px; line-height:1.35; }
+    }
+    }
+    .proc-delivery-table th, .proc-delivery-table td{
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    /* If a table still exceeds card width, allow horizontal scroll inside the card */
+    /* keeps columns readable without breaking layout */
+    
+
+    /* Procurement: keep tables fully visible, no overlap, no horizontal overflow */
+    .content .card{ min-width:0; } /* critical for CSS grid (prevents overlap) */
+
+    .proc-reorder-table,
+    .proc-delivery-table{
+      width:100%;
+      table-layout: fixed; /* enforce column widths within the card */
+    }
+
+    .proc-reorder-table th, .proc-reorder-table td,
+    .proc-delivery-table th, .proc-delivery-table td{
+      white-space: normal;           /* allow wrapping */
+      overflow-wrap: anywhere;       /* wrap long strings */
+      word-break: break-word;
+      line-height: 1.25;
+      vertical-align: middle;
+    }
+
+    /* Reorder table column widths */
+    .proc-reorder-table th:nth-child(1), .proc-reorder-table td:nth-child(1){ width:28%; }
+    .proc-reorder-table th:nth-child(2), .proc-reorder-table td:nth-child(2){ width:18%; }
+    .proc-reorder-table th:nth-child(3), .proc-reorder-table td:nth-child(3){ width:12%; }
+    .proc-reorder-table th:nth-child(4), .proc-reorder-table td:nth-child(4){ width:14%; }
+    .proc-reorder-table th:nth-child(5), .proc-reorder-table td:nth-child(5){ width:16%; }
+    .proc-reorder-table th:nth-child(6), .proc-reorder-table td:nth-child(6){ width:12%; text-align:right; }
+
+    /* Deliveries table column widths */
+    .proc-delivery-table th:nth-child(1), .proc-delivery-table td:nth-child(1){ width:22%; }
+    .proc-delivery-table th:nth-child(2), .proc-delivery-table td:nth-child(2){ width:34%; }
+    .proc-delivery-table th:nth-child(3), .proc-delivery-table td:nth-child(3){ width:24%; }
+    .proc-delivery-table th:nth-child(4), .proc-delivery-table td:nth-child(4){ width:20%; text-align:right; }
+
+    /* Keep badges from forcing overflow */
+    .proc-delivery-table .tag{ max-width: 100%; }
+    .proc-delivery-table .tag span{ display:inline-block; max-width:100%; }
+
+    /* Stepper */
+    .stepper{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top:10px; }
+    .step{ display:flex; gap:8px; align-items:center; padding:8px 10px; border:1px solid var(--line); border-radius:999px; background:#fff; font-weight:900; color:var(--muted); font-size:13px; }
+    .step .num{ width:22px; height:22px; border-radius:999px; display:grid; place-items:center; border:1px solid var(--line); background:#fff; color:var(--muted); font-weight:950; }
+    .step.active{ color:#0b57ff; border-color:#cddcff; background:#f2f7ff; }
+    .step.active .num{ border-color:#bcd1ff; color:#0b57ff; background:#fff; }
+    .step.done{ color:#0f766e; border-color:#baf2e2; background:#effdf8; }
+    .step.done .num{ border-color:#baf2e2; color:#0f766e; background:#fff; }
+
+    /* Right panel */
+    .split{ display:grid; grid-template-columns: repeat(12, 1fr); gap:14px; margin-top:14px; }
+    .panel{ padding:14px; min-width:0; }
+    .panel-title{ font-weight:950; font-size:16px; }
+    .panel-sub{ color:var(--muted); font-weight:750; font-size:13px; margin-top:4px; }
+    .kv{ display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:12px; }
+    .kv .cell{ border:1px solid var(--line); border-radius:14px; background:#fff; padding:10px 12px; }
+    .kv .k{ color:var(--muted); font-weight:900; font-size:12px; }
+    .kv .v{ font-weight:950; font-size:14px; margin-top:4px; }
+    .mono{ font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1; }
+
+    /* Approval timeline */
+    .timeline{ margin-top:12px; display:flex; flex-direction:column; gap:10px; }
+    .t-item{ display:flex; gap:10px; align-items:flex-start; }
+    .t-dot{ width:10px; height:10px; border-radius:999px; margin-top:6px; background:#dbe7ff; border:2px solid #bcd1ff; }
+    .t-item .txt{ font-weight:850; }
+    .t-item .sub{ color:var(--muted); font-weight:750; font-size:12px; margin-top:2px; }
+
+    /* Data table wrap with full visibility */
+    .data-table{ width:100%; table-layout:fixed; }
+    .data-table th, .data-table td{ white-space: normal; overflow-wrap:anywhere; word-break:break-word; line-height:1.25; vertical-align:middle; }
+    .data-table th{ color:var(--muted); font-weight:950; font-size:12px; }
+    .data-table td{ font-weight:850; }
+    .data-table .right{ text-align:right; }
+    .data-table .muted{ color:var(--muted); font-weight:800; }
+    .tag{ display:inline-flex; gap:8px; align-items:center; padding:6px 10px; border-radius:999px; border:1px solid var(--line); background:#fff; font-weight:900; font-size:12px; }
+    .tag.pending{ background:#fff7ed; border-color:#fed7aa; color:#9a3412; }
+    .tag.ok{ background:#effdf8; border-color:#baf2e2; color:#0f766e; }
+    .tag.bad{ background:#fff1f2; border-color:#fecdd3; color:#9f1239; }
+    .tag.neutral{ background:#f8fafc; border-color:#e2e8f0; color:#334155; }
+
+    .btn-row{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:flex-end; margin-top:12px; }
+    .ghost-btn{ height:40px; border-radius:12px; border:1px solid var(--line); background:#fff; padding:0 12px; font-weight:900; cursor:pointer; }
+    .ghost-btn:hover{ background:#f6f8ff; border-color:#cddcff; }
+    .danger-btn{ height:40px; border-radius:12px; border:1px solid #fecdd3; background:#fff1f2; padding:0 12px; font-weight:950; cursor:pointer; color:#9f1239; }
+    .danger-btn:hover{ filter:brightness(.98); }
+
+    .drawer{ position: fixed; inset: 0; background: rgba(15,23,42,.45); display:none; align-items:center; justify-content:center; z-index: 9998; padding:16px; }
+    .drawer.open{ display:flex; }
+    .modal{ width: min(920px, 100%); background:#fff; border-radius:18px; border:1px solid var(--line); box-shadow: 0 24px 60px rgba(0,0,0,.22); overflow:hidden; }
+    .modal-head{ display:flex; justify-content:space-between; align-items:center; padding:14px 16px; border-bottom:1px solid var(--line); }
+    .modal-title{ font-weight:950; }
+    .modal-body{ padding:14px 16px; }
+    .form-grid{ display:grid; grid-template-columns: repeat(12, 1fr); gap:12px; }
+    .field{ grid-column: span 6; }
+    .field.full{ grid-column: span 12; }
+    .label{ color:var(--muted); font-weight:900; font-size:12px; }
+    .input, .select, .textarea{
+      width:100%; border:1px solid var(--line); border-radius:12px; height:40px; padding:0 12px; outline:none; font-weight:850;
+    }
+    .textarea{ height:auto; padding:10px 12px; min-height:74px; resize:vertical; }
+    .muted-note{ color:var(--muted); font-weight:750; font-size:12px; margin-top:6px; }
+    .divider{ height:1px; background:var(--line); margin:12px 0; }
+
+  </style>
+</head>
+<body>
+<!-- Topbar -->
+  <header class="topbar">
+    <div class="brand">
+      <div class="app-icon" title="App">
+        <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="3" y="3" width="8" height="8" rx="2" fill="white" opacity=".95"></rect>
+          <rect x="13" y="3" width="8" height="8" rx="2" fill="white" opacity=".95"></rect>
+          <rect x="3" y="13" width="8" height="8" rx="2" fill="white" opacity=".95"></rect>
+          <rect x="13" y="13" width="8" height="8" rx="2" fill="white" opacity=".95"></rect>
+        </svg>
+      </div>
+      <div class="title">
+        Komodo Resort New
+        <svg class="caret" viewBox="0 0 20 20" aria-hidden="true">
+          <path d="M5 7l5 6 5-6" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+      </div>
+    </div>
+
+    <div class="global-search">
+      <div class="searchbox">
+        <svg class="magnify" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="7" fill="none" stroke="#111827" stroke-width="2"></circle>
+          <path d="M20 20l-3.5-3.5" fill="none" stroke="#111827" stroke-width="2" stroke-linecap="round"></path>
+        </svg>
+        <input type="text" placeholder="Search" />
+      </div>
+    </div>
+
+    <div class="top-actions">
+      <div class="icon-btn" title="Calendar">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M7 3v3M17 3v3" />
+          <path d="M4 7h16" />
+          <rect x="4" y="5" width="16" height="16" rx="3" />
+        </svg>
+      </div>
+      <div class="icon-btn" title="Settings">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"></path>
+          <path d="M19.4 15a7.8 7.8 0 0 0 .1-2l2-1.3-2-3.4-2.3.8a7.6 7.6 0 0 0-1.7-1l-.3-2.4H9l-.3 2.4a7.6 7.6 0 0 0-1.7 1l-2.3-.8-2 3.4 2 1.3a7.8 7.8 0 0 0 .1 2l-2 1.3 2 3.4 2.3-.8a7.6 7.6 0 0 0 1.7 1l.3 2.4h6l.3-2.4a7.6 7.6 0 0 0 1.7-1l2.3.8 2-3.4-2-1.3Z"></path>
+        </svg>
+      </div>
+      <div class="icon-btn" title="Help">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 18h.01"></path>
+          <path d="M9.1 9a3 3 0 1 1 5.8 1c0 2-3 2-3 4"></path>
+          <circle cx="12" cy="12" r="9"></circle>
+        </svg>
+      </div>
+      <div class="avatar" title="User">HY</div>
+    </div>
+  </header>
+<!-- Fixed Sidebar -->
+  <aside class="sidebar">
+    <div class="menu-group">
+      <div class="menu-item" data-link="#">
+        <div class="ico">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round"></path>
+          </svg>
+        </div>
+        <div class="label">Menu</div>
+      </div>
+
+      <div class="menu-item" data-link="#">
+        <div class="ico">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 11l8-7 8 7v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"></path>
+            <path d="M9 22V12h6v10"></path>
+          </svg>
+        </div>
+        <div class="label">Dashboard</div>
+      </div>
+
+      <!-- Products (expandable) -->
+      <div class="menu-item" data-toggle="products">
+        <div class="ico">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M7 7h10v10H7z"></path>
+            <path d="M9 11h6M9 14h4" stroke-linecap="round"></path>
+          </svg>
+        </div>
+        <div class="label">Products</div>
+        <svg class="chev" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+      </div>
+      <div class="submenu" data-submenu="products">
+        <a href="#" onclick="return false;">Products</a>
+        <a href="#" onclick="return false;">Categories</a>
+        <a href="#" onclick="return false;">Combinations</a>
+        <a href="ingredients_v14_with_procurement.html">Ingredients</a>
+        <a href="#" onclick="return false;">Unit Types</a>
+      </div>
+
+      <!-- Stock Management (expandable) -->
+      <div class="menu-item" data-toggle="stock">
+        <div class="ico">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round"></path>
+            <path d="M7 7v10M12 7v10M17 7v10"></path>
+          </svg>
+        </div>
+        <div class="label">Stock management</div>
+        <svg class="chev" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+      </div>
+      <div class="submenu" data-submenu="stock">
+        <a class="submenu-link" href="ingredients_v14_with_procurement.html"><span>Ingredients</span></a>
+        <a class="submenu-link" href="stock_count_v4_with_procurement.html"><span>Stock count</span></a>
+        <a class="submenu-link" href="#" onclick="return false;"><span>Recipes</span></a>
+        <a class="submenu-link" href="#" onclick="return false;"><span>Purchase Orders</span></a>
+        <a class="submenu-link" href="#" onclick="return false;"><span>Receiving</span></a>
+        <a class="submenu-link" href="#" onclick="return false;"><span>Vendor Credits</span></a>
+      </div>
+      <div class="menu-item open" data-toggle="procurement">
+        <div class="menu-icon">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6 7h15l-2 10H8L6 7z" stroke-linejoin="round"></path>
+            <path d="M6 7l-2-3H2" stroke-linecap="round"></path>
+            <path d="M9 20a1 1 0 100-2 1 1 0 000 2zM18 20a1 1 0 100-2 1 1 0 000 2z"></path>
+          </svg>
+        </div>
+        <span class="menu-label">Procurement</span>
+        <div class="chev">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18l6-6-6-6" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+        </div>
+      </div>
+      
+      <div class="submenu open" data-submenu="procurement">
+        <a class="submenu-link" href="procurement_overview_v2.html"><span>Overview</span></a>
+        <a class="submenu-link" href="procurement_pr_v1.html"><span>Purchase requisitions</span></a>
+        <a class="submenu-link active" href="procurement_po_v1.html"><span>Purchase orders</span></a>
+        <a class="submenu-link" href="procurement_receiving_v1.html"><span>Receiving</span></a>
+        <a class="submenu-link" href="#"><span>Suppliers</span></a>
+      </div>
+
+
+
+      <div class="sidebar-divider"></div>
+
+      <div class="menu-item" data-link="#">
+        <div class="ico">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M3 9h18"></path>
+            <path d="M7 12h10"></path>
+            <path d="M5 15h14"></path>
+          </svg>
+        </div>
+        <div class="label">Floors</div>
+        <svg class="chev" viewBox="0 0 24 24" aria-hidden="true" style="opacity:.65">
+          <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+      </div>
+
+      <div class="menu-item" data-link="#">
+        <div class="ico">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="6" y="3" width="12" height="14" rx="2"></rect>
+            <path d="M8 7h8M8 10h8M8 13h6" stroke-linecap="round"></path>
+            <path d="M8 21h8" stroke-linecap="round"></path>
+          </svg>
+        </div>
+        <div class="label">Printing</div>
+        <svg class="chev" viewBox="0 0 24 24" aria-hidden="true" style="opacity:.65">
+          <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+      </div>
+
+      <div class="menu-item" data-link="#">
+        <div class="ico">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="4" y="3" width="16" height="18" rx="3"></rect>
+            <path d="M8 8h8M8 12h8M8 16h6" stroke-linecap="round"></path>
+          </svg>
+        </div>
+        <div class="label">Payments</div>
+        <svg class="chev" viewBox="0 0 24 24" aria-hidden="true" style="opacity:.65">
+          <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+      </div>
+
+      <div class="menu-item" data-toggle="settings">
+        <div class="ico">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"></path>
+            <path d="M19.4 15a7.8 7.8 0 0 0 .1-2l2-1.3-2-3.4-2.3.8a7.6 7.6 0 0 0-1.7-1l-.3-2.4H9l-.3 2.4a7.6 7.6 0 0 0-1.7 1l-2.3-.8-2 3.4 2 1.3a7.8 7.8 0 0 0 .1 2l-2 1.3 2 3.4 2.3-.8a7.6 7.6 0 0 0 1.7 1l.3 2.4h6l.3-2.4a7.6 7.6 0 0 0 1.7-1l2.3.8 2-3.4-2-1.3Z"></path>
+          </svg>
+        </div>
+        <div class="label">Settings</div>
+        <svg class="chev" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+      </div>
+      <div class="submenu" data-submenu="settings">
+        <a href="#" onclick="return false;">General</a>
+        <a href="#" onclick="return false;">Users</a>
+        <a href="#" onclick="return false;">Integrations</a>
+      </div>
+    </div>
+  </aside>
+
+  <main class="content">
+    <div id="poListView">
+      <div class="breadcrumb">
+        <span>Procurement</span><span class="crumb-dot">›</span><span>Purchase orders</span>
+      </div>
+
+      <div class="page-head">
+        <div>
+          <h1 class="page-title">Purchase orders</h1>
+          <p class="page-desc">Send orders to suppliers, track expected deliveries, and move to receiving when items arrive.</p>
+          <div class="stepper">
+            <div class="step done"><span class="num">1</span> PR</div>
+            <div class="step active"><span class="num">2</span> PO</div>
+            <div class="step"><span class="num">3</span> Receiving</div>
+          </div>
+        </div>
+        <div class="right-actions">
+          <button class="primary-btn" id="btnNewPO">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke-linecap="round"></path></svg>
+            New purchase order
+          </button>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:10px;">
+        <div class="search">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M21 21l-4.35-4.35" stroke-linecap="round"/>
+            <circle cx="11" cy="11" r="7"/>
+          </svg>
+          <input id="poSearch" placeholder="Search PO #, supplier, linked PR..." />
+        </div>
+
+        <div class="chips">
+          <button class="chip active" data-filter="All">All</button>
+          <button class="chip" data-filter="Draft">Draft</button>
+          <button class="chip" data-filter="Sent">Sent</button>
+          <button class="chip" data-filter="Partially received">Partially received</button>
+          <button class="chip" data-filter="Received">Received</button>
+          <button class="chip" data-filter="Closed">Closed</button>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:14px; padding:14px;">
+        <table class="data-table" id="poTable">
+          <thead>
+            <tr>
+              <th style="width:14%;">PO #</th>
+              <th style="width:22%;">Supplier</th>
+              <th style="width:16%;">Delivery to</th>
+              <th style="width:14%;">Expected date</th>
+              <th style="width:14%;">Total</th>
+              <th style="width:14%;">Status</th>
+              <th style="width:14%;">Linked PR</th>
+              <th class="right" style="width:10%;">Action</th>
+            </tr>
+          </thead>
+          <tbody id="poTbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="poDetailView" style="display:none;">
+      <div class="breadcrumb">
+        <a href="#" id="backToPOList" class="mini-muted" style="text-decoration:none;font-weight:950;">← Back</a>
+        <span class="crumb-dot">›</span>
+        <span>Procurement</span><span class="crumb-dot">›</span><span>Purchase orders</span>
+      </div>
+
+      <div class="page-head" style="align-items:flex-start;">
+        <div>
+          <h1 class="page-title" id="poTitle">PO</h1>
+          <p class="page-desc" id="poSubtitle"></p>
+          <div class="stepper">
+            <div class="step done"><span class="num">1</span> PR</div>
+            <div class="step active"><span class="num">2</span> PO</div>
+            <div class="step" id="poStepRcv"><span class="num">3</span> Receiving</div>
+          </div>
+        </div>
+        <div class="right-actions">
+          <button class="btn-secondary" id="btnSendPO" style="height:40px;border-radius:12px;">Send PO</button>
+          <button class="primary-btn" id="btnReceivePO" style="box-shadow:none;">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7h10v10H7z" stroke-linejoin="round"></path><path d="M9 11h6M9 14h6" stroke-linecap="round"></path></svg>
+            Start receiving
+          </button>
+        </div>
+      </div>
+
+      <div class="split">
+        <div class="card panel" style="grid-column: span 8;">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+            <div>
+              <div class="panel-title">Order lines</div>
+              <div class="panel-sub">Ordered quantities and pricing. Receiving will update delivered quantities.</div>
+            </div>
+            <div class="tag neutral" id="poStatusTag">Status</div>
+          </div>
+
+          <div class="divider"></div>
+
+          <table class="data-table" id="poItemsTable">
+            <thead>
+              <tr>
+                <th style="width:26%;">Item</th>
+                <th style="width:10%;">SKU</th>
+                <th style="width:10%;">UOM</th>
+                <th style="width:14%;">Ordered qty</th>
+                <th style="width:14%;">Received qty</th>
+                <th style="width:14%;">Unit price</th>
+                <th class="right" style="width:12%;">Subtotal</th>
+              </tr>
+            </thead>
+            <tbody id="poItemsTbody"></tbody>
+          </table>
+
+          <div class="hint" style="margin-top:10px;">
+            Prototype: “Send PO” won’t email suppliers, but it changes PO status to Sent.
+          </div>
+        </div>
+
+        <div class="card panel" style="grid-column: span 4;">
+          <div class="panel-title">Order details</div>
+          <div class="panel-sub">Supplier, linked PR, totals and activity.</div>
+
+          <div class="kv">
+            <div class="cell"><div class="k">Supplier</div><div class="v" id="kvSupplier">—</div></div>
+            <div class="cell"><div class="k">Delivery to</div><div class="v" id="kvDelivery">—</div></div>
+            <div class="cell"><div class="k">Expected date</div><div class="v mono" id="kvExpected">—</div></div>
+            <div class="cell"><div class="k">Linked PR</div><div class="v mono" id="kvLinkedPR">—</div></div>
+            <div class="cell full" style="grid-column: span 2;"><div class="k">Total</div><div class="v" id="kvPOTotal">—</div></div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div style="font-weight:950;">Activity</div>
+          <div class="timeline" id="poTimeline"></div>
+
+          <div class="divider"></div>
+
+          <div style="font-weight:950;">Credits (auto)</div>
+          <div class="muted-note">Credits appear after receiving when delivered qty is less than ordered.</div>
+          <div id="poCredits" style="margin-top:10px; display:flex; flex-direction:column; gap:10px;"></div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+<!-- Help widget -->
+  <div class="help-widget">
+    <div class="help-menu" id="helpMenu">
+      <button class="close-x" id="helpClose" title="Close">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"></path>
+        </svg>
+      </button>
+      <div class="help-item">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="9"></circle>
+          <path d="M12 18h.01"></path>
+          <path d="M9.1 9a3 3 0 1 1 5.8 1c0 2-3 2-3 4"></path>
+        </svg>
+        Help &amp; Support
+      </div>
+      <div class="help-item">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 4h16v12H7l-3 3V4z"></path>
+          <path d="M8 9h8M8 12h6" stroke-linecap="round"></path>
+        </svg>
+        Give Feedback
+      </div>
+    </div>
+
+    
+
+
+  
+
+
+  
+
+
+  
+
+
+  
+
+  <script>
+    // ===== Sidebar accordion toggles =====
+    document.querySelectorAll('.menu-item[data-toggle]').forEach(item => {
+      item.addEventListener('click', () => {
+        const key = item.getAttribute('data-toggle');
+        const submenu = document.querySelector('.submenu[data-submenu="'+key+'"]');
+        if (!submenu) return;
+        const isOpen = submenu.classList.contains('open');
+        submenu.classList.toggle('open', !isOpen);
+        item.classList.toggle('open', !isOpen);
+      });
+    });
+
+    // ===== Help menu toggle =====
+    const helpBtn = document.getElementById('helpBtn');
+    const helpMenu = document.getElementById('helpMenu');
+    const helpClose = document.getElementById('helpClose');
+    function closeHelp(){ if (helpMenu) helpMenu.classList.remove('open'); }
+    if (helpBtn){
+      helpBtn.addEventListener('click', (e) => { e.stopPropagation(); helpMenu.classList.toggle('open'); });
+    }
+    if (helpClose){
+      helpClose.addEventListener('click', (e) => { e.stopPropagation(); closeHelp(); });
+    }
+    document.addEventListener('click', closeHelp);
+
+    // ===== Tiny toast =====
+    function toast(msg){
+      const el = document.createElement('div');
+      el.className = 'toast';
+      el.textContent = msg;
+      document.body.appendChild(el);
+      requestAnimationFrame(()=> el.classList.add('show'));
+      setTimeout(()=>{ el.classList.remove('show'); setTimeout(()=>el.remove(), 250); }, 2600);
+    }
+
+    // ===== Procurement storage =====
+    const STORE_KEY = 'procurement_demo_v1';
+    function nowISO(){ return new Date().toISOString(); }
+    function id(prefix){
+      const n = Math.floor(Math.random()*90000)+10000;
+      return prefix + '-' + n;
+    }
+    function getStore(){
+      const raw = localStorage.getItem(STORE_KEY);
+      if (raw) return JSON.parse(raw);
+      // seed demo data
+      const seed = {
+        settings: {
+          approvalsEnabled: true,
+          thresholds: [
+            { level: 1, role: 'Outlet manager', rule: 'Required' },
+            { level: 2, role: 'Finance', rule: 'If total > IDR 5,000,000' },
+            { level: 3, role: 'Owner', rule: 'If total > IDR 20,000,000' },
+          ]
+        },
+        prs: [],
+        pos: [],
+        receivings: [],
+        credits: []
+      };
+      localStorage.setItem(STORE_KEY, JSON.stringify(seed));
+      return seed;
+    }
+    function saveStore(store){ localStorage.setItem(STORE_KEY, JSON.stringify(store)); }
+
+    // ===== Draft PR helpers =====
+    function getOrCreateDraftPR(){
+      const store = getStore();
+      let pr = store.prs.find(p => p.status === 'Draft');
+      if (!pr){
+        pr = {
+          id: id('PR'),
+          createdAt: nowISO(),
+          requester: 'HY',
+          scope: 'Full store',
+          location: 'Main kitchen',
+          neededBy: new Date(Date.now()+7*86400000).toISOString().slice(0,10),
+          status: 'Draft',
+          approvals: [],
+          items: [],
+          activity: [{ at: nowISO(), text: 'Draft requisition created' }]
+        };
+        store.prs.unshift(pr);
+        saveStore(store);
+      }
+      return pr;
+    }
+
+    function addItemToDraftPR(item){
+      const store = getStore();
+      const pr = store.prs.find(p => p.status === 'Draft') || getOrCreateDraftPR();
+      const found = pr.items.find(x => x.sku === item.sku);
+      if (found){
+        found.qty += item.qty;
+      } else {
+        pr.items.push(item);
+      }
+      pr.activity.unshift({ at: nowISO(), text: 'Item added: ' + item.name });
+      saveStore(store);
+      toast('Added to draft PR');
+    }
+
+    // Expose for pages
+    window.ProcurementDemo = { getStore, saveStore, getOrCreateDraftPR, addItemToDraftPR, toast, id, nowISO };
+
+    // Overview: wire "Add to PR"
+    document.querySelectorAll('[data-add-to-pr]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const item = {
+          name: btn.getAttribute('data-name'),
+          sku: btn.getAttribute('data-sku'),
+          uom: btn.getAttribute('data-uom') || 'g',
+          qty: parseInt(btn.getAttribute('data-qty') || '1000', 10),
+          estUnitPrice: parseInt(btn.getAttribute('data-price') || '0', 10),
+          supplier: btn.getAttribute('data-supplier') || '—'
+        };
+        addItemToDraftPR(item);
+      });
+    });
+
+    // Prototype actions
+    document.getElementById('btnNewPO')?.addEventListener('click', () => window.location.href='procurement_po_v1.html');
+    document.getElementById('btnQuickReceive')?.addEventListener('click', () => window.location.href='procurement_receiving_v1.html');
+  
+
+    // ===== PO page logic =====
+    const poTbody = document.getElementById('poTbody');
+    const poListView = document.getElementById('poListView');
+    const poDetailView = document.getElementById('poDetailView');
+    const poItemsTbody = document.getElementById('poItemsTbody');
+    const poTimeline = document.getElementById('poTimeline');
+    const poCredits = document.getElementById('poCredits');
+
+    let currentPOId = null;
+    let poFilter = 'All';
+
+    function formatIDR(n){
+      try{ return 'IDR ' + (n||0).toLocaleString('en-US'); }catch(e){ return 'IDR ' + (n||0); }
+    }
+    function calcPOTotal(po){
+      return (po.items||[]).reduce((sum,it)=> sum + (it.orderedQty||0) * (it.unitPrice||0), 0);
+    }
+    function statusTag(status){
+      if (status==='Draft') return '<span class="tag neutral">Draft</span>';
+      if (status==='Sent') return '<span class="tag pending">Sent</span>';
+      if (status==='Partially received') return '<span class="tag pending">Partially received</span>';
+      if (status==='Received') return '<span class="tag ok">Received</span>';
+      if (status==='Closed') return '<span class="tag neutral">Closed</span>';
+      return '<span class="tag neutral">'+status+'</span>';
+    }
+
+    function ensureSeedPO(){
+      const store = ProcurementDemo.getStore();
+      if (store.pos.length === 0){
+        // If there is an approved PR, create a draft PO for demo
+        const approved = store.prs.find(p=>p.status==='Converted') || store.prs.find(p=>p.status==='Approved');
+        if (approved){
+          const po = {
+            id: ProcurementDemo.id('PO'),
+            createdAt: ProcurementDemo.nowISO(),
+            supplier: (approved.items[0]?.supplier) || 'Dairy Co.',
+            location: approved.location || 'Main kitchen',
+            expectedDate: approved.neededBy || new Date(Date.now()+5*86400000).toISOString().slice(0,10),
+            status: 'Draft',
+            linkedPR: approved.id,
+            items: approved.items.map(it=> ({ name:it.name, sku:it.sku, uom:it.uom||'g', orderedQty:it.qty, receivedQty:0, unitPrice: it.estUnitPrice||0 })),
+            activity: [{ at: ProcurementDemo.nowISO(), text: 'PO created' }]
+          };
+          store.pos.unshift(po);
+          ProcurementDemo.saveStore(store);
+        }
+      }
+    }
+
+    function renderPOList(){
+      const store = ProcurementDemo.getStore();
+      const q = (document.getElementById('poSearch')?.value || '').toLowerCase().trim();
+      const rows = store.pos.filter(po=>{
+        const okFilter = (poFilter==='All') || (po.status===poFilter);
+        const okQ = !q || (po.id.toLowerCase().includes(q) || (po.supplier||'').toLowerCase().includes(q) || (po.linkedPR||'').toLowerCase().includes(q));
+        return okFilter && okQ;
+      });
+
+      poTbody.innerHTML = rows.map(po=>{
+        const total = calcPOTotal(po);
+        return `
+          <tr>
+            <td class="mono">${po.id}</td>
+            <td>${po.supplier}</td>
+            <td class="muted">${po.location}</td>
+            <td class="mono">${po.expectedDate}</td>
+            <td class="mono">${formatIDR(total)}</td>
+            <td>${statusTag(po.status)}</td>
+            <td class="mono muted">${po.linkedPR || '—'}</td>
+            <td class="right"><button class="link-btn" data-open-po="${po.id}">View</button></td>
+          </tr>
+        `;
+      }).join('');
+
+      document.querySelectorAll('[data-open-po]').forEach(btn=>{
+        btn.addEventListener('click', ()=> openPODetail(btn.getAttribute('data-open-po')));
+      });
+    }
+
+    function renderPODetail(po){
+      currentPOId = po.id;
+      const total = calcPOTotal(po);
+
+      document.getElementById('poTitle').textContent = po.id;
+      document.getElementById('poSubtitle').textContent = `Supplier ${po.supplier} • Created ${new Date(po.createdAt).toLocaleString()}`;
+      document.getElementById('poStatusTag').innerHTML = statusTag(po.status);
+
+      document.getElementById('kvSupplier').textContent = po.supplier;
+      document.getElementById('kvDelivery').textContent = po.location;
+      document.getElementById('kvExpected').textContent = po.expectedDate;
+      document.getElementById('kvLinkedPR').textContent = po.linkedPR || '—';
+      document.getElementById('kvPOTotal').textContent = formatIDR(total);
+
+      poItemsTbody.innerHTML = (po.items||[]).map(it=>{
+        const sub = (it.orderedQty||0) * (it.unitPrice||0);
+        return `
+          <tr>
+            <td>${it.name}</td>
+            <td class="mono muted">${it.sku}</td>
+            <td class="muted">${it.uom}</td>
+            <td class="mono">${(it.orderedQty||0).toLocaleString('en-US')} ${it.uom}</td>
+            <td class="mono">${(it.receivedQty||0).toLocaleString('en-US')} ${it.uom}</td>
+            <td class="mono">${formatIDR(it.unitPrice||0)}</td>
+            <td class="right mono">${formatIDR(sub)}</td>
+          </tr>
+        `;
+      }).join('');
+
+      poTimeline.innerHTML = (po.activity||[]).map(ev=>`
+        <div class="t-item">
+          <div class="t-dot"></div>
+          <div>
+            <div class="txt">${ev.text}</div>
+            <div class="sub mono">${new Date(ev.at).toLocaleString()}</div>
+          </div>
+        </div>
+      `).join('');
+
+      // credits for this PO
+      const store = ProcurementDemo.getStore();
+      const credits = (store.credits||[]).filter(c=>c.poId===po.id);
+      poCredits.innerHTML = credits.length ? credits.map(c=>`
+        <div class="cell" style="border:1px solid #baf2e2;background:#effdf8;border-radius:14px;padding:10px 12px;">
+          <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;">
+            <div style="font-weight:950;">${formatIDR(c.amount)}</div>
+            <span class="tag ok">Auto-logged</span>
+          </div>
+          <div class="muted-note">Short shipped: ${c.item} (${c.shortQty} ${c.uom}) • Supplier: ${c.supplier}</div>
+        </div>
+      `).join('') : '<div class="hint">No credits yet.</div>';
+
+      document.getElementById('poStepRcv').classList.toggle('done', po.status==='Received' || po.status==='Closed');
+      document.getElementById('poStepRcv').classList.toggle('active', false);
+    }
+
+    function openPODetail(poId){
+      const store = ProcurementDemo.getStore();
+      const po = store.pos.find(p=>p.id===poId);
+      if (!po) return;
+      poListView.style.display = 'none';
+      poDetailView.style.display = 'block';
+      renderPODetail(po);
+    }
+    function backToList(){
+      poDetailView.style.display = 'none';
+      poListView.style.display = 'block';
+      renderPOList();
+    }
+
+    document.getElementById('backToPOList')?.addEventListener('click', (e)=>{ e.preventDefault(); backToList(); });
+    document.getElementById('poSearch')?.addEventListener('input', renderPOList);
+    document.querySelectorAll('.chip[data-filter]').forEach(ch=>{
+      ch.addEventListener('click', ()=>{
+        document.querySelectorAll('.chip[data-filter]').forEach(x=>x.classList.remove('active'));
+        ch.classList.add('active');
+        poFilter = ch.getAttribute('data-filter');
+        renderPOList();
+      });
+    });
+
+    document.getElementById('btnNewPO')?.addEventListener('click', ()=>{
+      const store = ProcurementDemo.getStore();
+      const po = {
+        id: ProcurementDemo.id('PO'),
+        createdAt: ProcurementDemo.nowISO(),
+        supplier: 'Dairy Co.',
+        location: 'Main kitchen',
+        expectedDate: new Date(Date.now()+5*86400000).toISOString().slice(0,10),
+        status: 'Draft',
+        linkedPR: '—',
+        items: [
+          { name:'Butter', sku:'1008', uom:'g', orderedQty:2000, receivedQty:0, unitPrice:0 },
+        ],
+        activity: [{ at: ProcurementDemo.nowISO(), text:'PO created' }]
+      };
+      store.pos.unshift(po);
+      ProcurementDemo.saveStore(store);
+      ProcurementDemo.toast('New PO created');
+      renderPOList();
+      openPODetail(po.id);
+    });
+
+    document.getElementById('btnSendPO')?.addEventListener('click', ()=>{
+      const store = ProcurementDemo.getStore();
+      const po = store.pos.find(p=>p.id===currentPOId);
+      if (!po) return;
+      if (po.status==='Draft'){
+        po.status = 'Sent';
+        po.activity.unshift({ at: ProcurementDemo.nowISO(), text:'PO sent to supplier (prototype)' });
+        ProcurementDemo.saveStore(store);
+        ProcurementDemo.toast('PO sent');
+        renderPODetail(po);
+      } else {
+        ProcurementDemo.toast('Already sent');
+      }
+    });
+
+    document.getElementById('btnReceivePO')?.addEventListener('click', ()=>{
+      if (!currentPOId) return;
+      window.location.href = 'procurement_receiving_v1.html#' + currentPOId;
+    });
+
+    // Deep link by hash
+    function openFromHash(){
+      const h = location.hash.replace('#','').trim();
+      if (!h) return;
+      setTimeout(()=> openPODetail(h), 50);
+    }
+
+    ensureSeedPO();
+    renderPOList();
+    openFromHash();
+  </script>
+
+</body>
+</html>
